@@ -38,7 +38,7 @@ const pad2 = (n: number) => (n < 10 ? `0${n}` : `${n}`);
 const minsSince = (d: Date, startHour: number) => d.getHours() * 60 + d.getMinutes() - startHour * 60;
 
 /* ---------- the demo component ---------- */
-export default function WeekScheduleDemo({ selectedRoomName, events = [] }: { selectedRoomName?: string; events?: EventItem[] }) {
+export default function WeekScheduleDemo({ selectedRoomName, events = [], onSlotClick }: { selectedRoomName?: string; events?: EventItem[]; onSlotClick?: (isoDate: string, hour: number) => void }) {
   // demo config
   const roomName = selectedRoomName || "Orion — 3rd Floor";
   const startHour = 8;
@@ -138,11 +138,27 @@ export default function WeekScheduleDemo({ selectedRoomName, events = [] }: { se
               style={{ height: totalMinutes * pxPerMinute }}
             >
               {/* Hour lines */}
-              {Array.from({ length: endHour - startHour + 1 }, (_, i) => (
+              {Array.from({ length: endHour - startHour }, (_, i) => (
                 <div
                   key={i}
-                  className="absolute left-0 right-0 border-t border-gray-100"
-                  style={{ top: i * 60 * pxPerMinute }}
+                  onClick={() => {
+                    // Build local YYYY-MM-DD to avoid UTC shifting a day back
+                    const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+                    onSlotClick?.(iso, startHour + i);
+                  }}
+                  className={`absolute left-0 right-0 cursor-pointer transition-colors border-t border-gray-200 hover:border-gray-400 hover:bg-gray-800 dark:hover:bg-gray-700 ${
+                    (eventsByDay.get(dayIdx) || []).some((ev) => {
+                      const hourStart = new Date(d);
+                      hourStart.setHours(startHour + i, 0, 0, 0);
+                      const hourEnd = new Date(hourStart);
+                      hourEnd.setMinutes(hourEnd.getMinutes() + 60);
+                      return ev.start < hourEnd && ev.end > hourStart;
+                    })
+                      ? "bg-amber-50"
+                      : ""
+                  }`}
+                  style={{ top: i * 60 * pxPerMinute, height: 60 * pxPerMinute }}
+                  aria-label={`Hour ${startHour + i}:00`}
                 />
               ))}
 
@@ -152,14 +168,14 @@ export default function WeekScheduleDemo({ selectedRoomName, events = [] }: { se
               )}
 
               {/* Events */}
-              <div className="absolute inset-0">
+              <div className="absolute inset-0 pointer-events-none">
                 {(eventsByDay.get(dayIdx) || []).map((ev) => {
                   const top = Math.max(0, minsSince(ev.start, startHour) * pxPerMinute);
                   const height = Math.max(20, ((+ev.end - +ev.start) / 60000) * pxPerMinute);
                   return (
                     <div
                       key={ev.id}
-                      className={`absolute left-1 right-1 rounded-md shadow-sm border text-xs text-white p-2 ${
+                      className={`absolute left-1 right-1 rounded-md shadow-sm border text-xs text-white p-2 pointer-events-auto ${
                         ev.color || "bg-blue-600"
                       }`}
                       style={{ top, height }}
