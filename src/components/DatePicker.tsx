@@ -12,7 +12,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
-export default function DatePicker({ className = "" }) {
+export default function DatePicker({ className = "", onSelect }: { className?: string; onSelect?: (d: Date) => void }) {
   const [open, setOpen] = React.useState(false)
   const [date, setDate] = React.useState<Date | undefined>(undefined)
 
@@ -32,13 +32,15 @@ export default function DatePicker({ className = "" }) {
             <ChevronDownIcon />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto overflow-hidden p-0" align="start">
+        <PopoverContent className="w-auto overflow-hidden p-0 bg-black text-white border border-white/20" align="start">
           <Calendar
             mode="single"
             selected={date}
             captionLayout="dropdown"
-            onSelect={(date) => {
-              setDate(date)
+            className="bg-black text-white"
+            onSelect={(d) => {
+              setDate(d)
+              if (d) onSelect?.(d)
               setOpen(false)
             }}
           />

@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useMemo } from "react";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import React, { useMemo, useState } from "react";
+import DatePicker from "./DatePicker";
 
 type EventItem = {
   id: string;
@@ -43,7 +45,8 @@ export default function WeekScheduleDemo() {
   const endHour = 20; // exclusive bottom
   const pxPerMinute = 1; // 1px per minute ⇒ 720px tall if 12h
 
-  const weekStart = useMemo(() => startOfWeekMonday(), []);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const weekStart = useMemo(() => startOfWeekMonday(selectedDate), [selectedDate]);
   const weekDays = useMemo(() => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)), [weekStart]);
 
   // demo events
@@ -99,14 +102,31 @@ export default function WeekScheduleDemo() {
       {/* Header */}
       <div className="flex items-center justify-between bg-gray-50 border-b px-4 py-3">
         <div className="font-semibold">{roomName}</div>
-        <div className="text-sm text-gray-600">
-          Week of{" "}
-          {weekStart.toLocaleDateString(undefined, {
-            month: "long",
-            day: "2-digit",
-            year: "numeric",
-          })}
-        </div>
+        <div className="mt-2">
+            <DatePicker onSelect={(d: Date) => setSelectedDate(d)} />
+          </div>
+       <div className="flex flex-col items-center gap-2">
+                
+                      <div className="text-sm text-gray-600">
+                          Week of{" "}
+                          {weekStart.toLocaleDateString(undefined, {
+                            month: "long",
+                            day: "2-digit",
+                            year: "numeric",
+                          })}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button type="button" onClick={() => setSelectedDate(d => addDays(d, -7))} aria-label="Previous week">
+                          <ChevronLeftIcon className="w-4 h-4 cursor-pointer" />
+                        </button>
+                        <button type="button" onClick={() => setSelectedDate(d => addDays(d, 7))} aria-label="Next week">
+                          <ChevronRightIcon className="w-4 h-4 cursor-pointer" />
+                        </button>
+                      </div>
+            
+          {/* Inline date picker */}
+          
+       </div>
       </div>
 
       {/* Day headers */}
@@ -120,8 +140,8 @@ export default function WeekScheduleDemo() {
         ))}
       </div>
 
-      {/* Grid */}
-      <div className="relative">
+      {/* Grid (scrollable) */}
+      <div className="relative max-h-[70vh] overflow-y-auto">
         <div className="grid grid-cols-[80px_repeat(7,1fr)]">
           {/* Time labels */}
           <div className="relative" style={{ height: totalMinutes * pxPerMinute }}>
