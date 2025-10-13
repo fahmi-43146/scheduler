@@ -1,28 +1,53 @@
-import { Atom, Microscope, Calculator } from "lucide-react";
+import { Atom, Microscope, Calculator, FlaskConical, Dna, Telescope, Cpu, Mountain, Leaf, Bot } from "lucide-react";
 
 type Room = {
+  id?: string;
   name: string;
   Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
 };
 
-const rooms: Room[] = [
-  { name: "Science", Icon: Atom },
+const defaultRooms: Room[] = [
+  { name: "Physics", Icon: Atom },
   { name: "Biology", Icon: Microscope },
-  { name: "Math", Icon: Calculator },
+  { name: "Mathematics", Icon: Calculator },
+  { name: "Chemistry", Icon: FlaskConical },
+  { name: "Genetics", Icon: Dna },
+  { name: "Astronomy", Icon: Telescope },
+  { name: "Computer Science", Icon: Cpu },
+  { name: "Geology", Icon: Mountain },
+  { name: "Ecology", Icon: Leaf },
+  { name: "Robotics", Icon: Bot },
 ];
 
-export default function Rooms() {
+export default function Rooms({
+  rooms = defaultRooms,
+  selectedRoomName,
+  onSelect,
+}: {
+  rooms?: Room[];
+  selectedRoomName?: string;
+  onSelect?: (roomName: string, roomId?: string) => void;
+}) {
   return (
     <div className="flex flex-col gap-3">
-      {rooms.map(({ name, Icon }) => (
-        <div
-          key={name}
-          className="flex items-center gap-3 rounded border border-black/10 dark:border-white/15 bg-white dark:bg-gray-900 px-3 py-2"
-        >
-          <Icon className="w-5 h-5" />
-          <span className="text-body">{name}</span>
-        </div>
-      ))}
+      {rooms.map(({ name, Icon, id }) => {
+        const isActive = selectedRoomName === name;
+        return (
+          <button
+            key={id || name}
+            type="button"
+            onClick={() => onSelect?.(name, id)}
+            className={`flex items-center gap-3 rounded border px-3 py-2 text-left transition-colors ${
+              isActive
+                ? "border-gray-900 bg-gray-50 dark:border-white/30 dark:bg-gray-800"
+                : "border-black/10 dark:border-white/15 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800"
+            }`}
+          >
+            <Icon className="w-5 h-5" />
+            <span className="text-body">{name}</span>
+          </button>
+        );
+      })}
     </div>
   );
 }

@@ -38,9 +38,9 @@ const pad2 = (n: number) => (n < 10 ? `0${n}` : `${n}`);
 const minsSince = (d: Date, startHour: number) => d.getHours() * 60 + d.getMinutes() - startHour * 60;
 
 /* ---------- the demo component ---------- */
-export default function WeekScheduleDemo() {
+export default function WeekScheduleDemo({ selectedRoomName, events = [] }: { selectedRoomName?: string; events?: EventItem[] }) {
   // demo config
-  const roomName = "Orion — 3rd Floor";
+  const roomName = selectedRoomName || "Orion — 3rd Floor";
   const startHour = 8;
   const endHour = 20; // exclusive bottom
   const pxPerMinute = 1; // 1px per minute ⇒ 720px tall if 12h
@@ -49,33 +49,7 @@ export default function WeekScheduleDemo() {
   const weekStart = useMemo(() => startOfWeekMonday(selectedDate), [selectedDate]);
   const weekDays = useMemo(() => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)), [weekStart]);
 
-  // demo events
-  const events: EventItem[] = useMemo(() => {
-    const d = weekStart;
-    return [
-      {
-        id: "e1",
-        title: "Standup",
-        start: new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1, 9, 0),
-        end:   new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1, 9, 45),
-        color: "bg-blue-600",
-      },
-      {
-        id: "e2",
-        title: "Thesis Rehearsal",
-        start: new Date(d.getFullYear(), d.getMonth(), d.getDate() + 2, 10, 0),
-        end:   new Date(d.getFullYear(), d.getMonth(), d.getDate() + 2, 12, 0),
-        color: "bg-emerald-600",
-      },
-      {
-        id: "e3",
-        title: "Client Call",
-        start: new Date(d.getFullYear(), d.getMonth(), d.getDate() + 3, 14, 0),
-        end:   new Date(d.getFullYear(), d.getMonth(), d.getDate() + 3, 15, 0),
-        color: "bg-fuchsia-600",
-      },
-    ];
-  }, [weekStart]);
+  // events are provided by parent (per selected room)
 
   // bucket events by day index
   const eventsByDay = useMemo(() => {
