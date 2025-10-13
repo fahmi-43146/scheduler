@@ -1,4 +1,5 @@
 import Rooms from "@/components/Rooms";
+import Scheduler from "@/components/Scheduler";
 
 export default function Home() {
   return (
@@ -11,6 +12,7 @@ export default function Home() {
       </div>
       <div className="bg-gray-50 dark:bg-gray-800 p-4 text-center md:flex-[5]">
         <h2 className="text-heading-2 mb-4">Scheduler</h2>
+        <Scheduler />
       </div>
     </div>
   );
