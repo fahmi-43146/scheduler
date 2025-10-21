@@ -2,7 +2,7 @@ import { Facebook, Instagram, Github, Chrome, Info, Linkedin, Twitter, Youtube, 
 
 export default function Footer() {
   return (
-    <footer className="border-t border-black/[.08] dark:border-white/[.145] bg-gray-800 text-white">
+    <footer className="border-t border-black/[.08] dark:border-white/[.145] bg-gradient-to-r from-orange-500 to-orange-600 text-white">
       <div className="mx-auto max-w-6xl px-6 py-6 text-body-small md:text-body relative">
         <div className="md:flex md:flex-row gap-6 items-start">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 text-center sm:text-left flex-1">

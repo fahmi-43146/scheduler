@@ -1,37 +1,166 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Academic Scheduler
+
+A modern, responsive web application for managing academic room schedules and events. Built with Next.js and designed for educational institutions.
+
+## About
+
+This scheduler application is designed for academic institutions to manage room bookings, schedule events, and coordinate resources across different departments. The system provides an intuitive interface for viewing weekly schedules, booking rooms, and managing academic events.
+
+## Owner
+
+**Dr. Afef Najjari**  
+Professor of Biology and Computer Science  
+Campus Universitaire El Manar, 2092 El Manar, Tunis
+
+## Features
+
+### 🏢 Room Management
+- **Multiple Academic Rooms**: Physics, Biology, Mathematics, Chemistry, Genetics, Astronomy, Computer Science, Geology, Ecology, and Robotics
+- **Room Selection**: Easy switching between different academic spaces
+- **Visual Room Indicators**: Clear identification of available rooms
+
+### 📅 Schedule Management
+- **Weekly View**: Comprehensive 7-day schedule display
+- **Time Slots**: 8 AM to 8 PM scheduling (12-hour coverage)
+- **Interactive Calendar**: Click on time slots to create events
+- **Date Navigation**: Navigate between different weeks
+
+### 📝 Event Creation
+- **Modal Dialog**: Clean, non-intrusive event creation interface
+- **Event Details**: Title, organizer, date, start/end times
+- **Color Coding**: Visual event categorization with color options
+- **Quick Booking**: Click on scheduler slots for instant event creation
+
+### 🎨 Modern Design
+- **Responsive Layout**: Works on desktop, tablet, and mobile devices
+- **Orange Theme**: Cohesive color scheme with orange gradients
+- **Dark Mode Support**: Automatic theme switching based on system preferences
+- **Clean Interface**: Minimalist design focused on usability
+
+## Technology Stack
+
+- **Frontend**: Next.js 15, React 19, TypeScript
+- **Styling**: Tailwind CSS v4
+- **UI Components**: Radix UI primitives
+- **Icons**: Lucide React
+- **Date Handling**: date-fns library
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Node.js 18+ 
+- npm, yarn, pnpm, or bun
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd scheduler
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   # or
+   yarn install
+   # or
+   pnpm install
+   ```
+
+3. **Run the development server**
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   # or
+   pnpm dev
+   ```
+
+4. **Open your browser**
+   Navigate to [http://localhost:3000](http://localhost:3000)
+
+## Usage
+
+### Creating Events
+1. **Select a Room**: Choose from the available academic rooms
+2. **Click "Add Event"**: Use the orange button or click on a time slot
+3. **Fill Event Details**: Complete the form in the modal dialog
+4. **Submit**: Your event will appear on the schedule
+
+### Navigating the Schedule
+- **Week Navigation**: Use the arrow buttons to move between weeks
+- **Date Picker**: Click the date picker to jump to specific dates
+- **Time Slots**: Click on any hour slot to create an event for that time
+
+### Room Management
+- **Room Selection**: Click on any room in the left panel to view its schedule
+- **Active Room**: The selected room is highlighted in orange
+- **Room Switching**: Switch between rooms to view different schedules
+
+## Project Structure
+
+```
+src/
+├── app/                 # Next.js app directory
+│   ├── globals.css     # Global styles and theme
+│   ├── layout.tsx      # Root layout component
+│   └── page.tsx        # Home page
+├── components/         # React components
+│   ├── ui/            # Reusable UI components
+│   ├── Header.tsx     # Navigation header
+│   ├── Footer.tsx     # Site footer
+│   ├── HomeClient.tsx # Main application logic
+│   ├── Rooms.tsx      # Room selection component
+│   ├── Scheduler.tsx   # Weekly schedule view
+│   ├── EventForm.tsx   # Event creation form
+│   └── DatePicker.tsx  # Date selection component
+└── lib/               # Utility functions
+    └── utils.ts       # Helper utilities
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Customization
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Adding New Rooms
+Edit `src/components/Rooms.tsx` to add new academic rooms:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```typescript
+const defaultRooms: Room[] = [
+  { name: "New Room", Icon: YourIcon },
+  // ... existing rooms
+];
+```
 
-## Learn More
+### Changing Colors
+The application uses a consistent orange theme. To modify colors, update the Tailwind classes in:
+- Header/Footer: `from-orange-500 to-orange-600`
+- Buttons: `bg-orange-600 hover:bg-orange-700`
+- Accents: `text-orange-600`
 
-To learn more about Next.js, take a look at the following resources:
+### Time Range
+Modify the schedule hours in `src/components/Scheduler.tsx`:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```typescript
+const startHour = 8;  // Start time (24-hour format)
+const endHour = 20;   // End time (24-hour format)
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Contributing
 
-## Deploy on Vercel
+This project is maintained by Dr. Afef Najjari. For contributions or questions, please contact the project owner.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## License
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# scheduler
+This project is proprietary software developed for academic use at Campus Universitaire El Manar.
+
+## Contact
+
+**Dr. Afef Najjari**  
+Professor of Biology and Computer Science  
+Campus Universitaire El Manar  
+2092 El Manar, Tunis  
+Email: [Contact Information]
+
+---
+
+Built with ❤️ for academic institutions

@@ -35,7 +35,7 @@ export default function EventForm({
 
   return (
     <form
-      className="space-y-3 p-4 rounded-md border border-gray-200 bg-white dark:bg-gray-900"
+      className="space-y-3"
       onSubmit={(e) => {
         e.preventDefault();
         onSubmit(form);
@@ -108,10 +108,7 @@ export default function EventForm({
         </select>
       </div>
       <div className="flex justify-end gap-2">
-        <button type="button" className="px-3 py-1 rounded border" onClick={onCancel}>
-          Cancel
-        </button>
-        <button type="submit" className="px-3 py-1 rounded bg-black text-white">
+        <button type="submit" className="px-3 py-1 rounded bg-orange-600 hover:bg-orange-700 text-white">
           Add Event
         </button>
       </div>

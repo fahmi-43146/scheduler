@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/* ===== Enums ===== */
+enum UserRole {
+  ADMIN
+  USER
+}
+
+enum UserStatus {
+  PENDING
+  APPROVED
+  SUSPENDED
+}
+
+enum EventStatus {
+  ACTIVE
+  CANCELLED
+}
+
+/* ===== Models ===== */
+
+model User {
+  id            String        @id @default(cuid())
+  email         String        @unique
+  passwordHash  String
+  name          String?
+  role          UserRole      @default(USER)
+  status        UserStatus    @default(PENDING)
+  emailVerified DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // Relations
+  events          Event[]         @relation("UserEvents")
+  approvals       UserApproval[]  @relation("UserApprovals")      // approvals received for this user
+  approvalsMade   UserApproval[]  @relation("AdminApprovals")     // approvals this admin made
+
+  @@map("users")
+}
+
+model Room {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  icon      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  events    Event[]
+
+  @@map("rooms")
+}
+
+model Event {
+  id          String       @id @default(cuid())
+  title       String
+  description String?
+  startTime   DateTime
+  endTime     DateTime
+  status      EventStatus  @default(ACTIVE)
+  color       String       @default("bg-orange-600")
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  // Relations
+  roomId      String
+  room        Room         @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  createdById String
+  createdBy   User         @relation("UserEvents", fields: [createdById], references: [id], onDelete: Cascade)
+
+  @@index([roomId, startTime])
+  @@index([createdById])
+  @@index([startTime, endTime])
+  @@map("events")
+}
+
+/* Approval log of admin decisions */
+model UserApproval {
+  id         String            @id @default(cuid())
+  userId     String
+  adminId    String?           // optional so we can SetNull if admin is deleted
+  decision   ApprovalDecision
+  reason     String?
+  createdAt  DateTime          @default(now())
+
+  // The user who was approved/rejected
+  user       User              @relation("UserApprovals", fields: [userId], references: [id], onDelete: Cascade)
+
+  // The admin who made the decision
+  admin      User?             @relation("AdminApprovals", fields: [adminId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([adminId])
+}
+
+enum ApprovalDecision {
+  APPROVE
+  REJECT
+}
