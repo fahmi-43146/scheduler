@@ -7,7 +7,9 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/* ===== Enums ===== */
+/**
+ * ===== Enums =====
+ */
 enum UserRole {
   ADMIN
   USER
@@ -24,84 +26,116 @@ enum EventStatus {
   CANCELLED
 }
 
-/* ===== Models ===== */
+/**
+ * ===== Models =====
+ */
 
 model User {
-  id            String        @id @default(cuid())
-  email         String        @unique
-  passwordHash  String
+  id            String     @id @default(cuid())
+  email         String     @unique @db.Citext
+  passwordHash  String?
   name          String?
-  role          UserRole      @default(USER)
-  status        UserStatus    @default(PENDING)
-  emailVerified DateTime?
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  role          UserRole   @default(USER)
+  status        UserStatus @default(PENDING)
+  emailVerified DateTime?  @db.Timestamptz
+  createdAt     DateTime   @default(now()) @db.Timestamptz
+  updatedAt     DateTime   @updatedAt @db.Timestamptz
+  deletedAt     DateTime?  @db.Timestamptz
 
-  // Relations
-  events          Event[]         @relation("UserEvents")
-  approvals       UserApproval[]  @relation("UserApprovals")      // approvals received for this user
-  approvalsMade   UserApproval[]  @relation("AdminApprovals")     // approvals this admin made
+  // ✅ Correct Relations
+  accounts      Account[]      @relation("UserToAccount")
+  events        Event[]        @relation("UserEvents")
+  approvals     UserApproval[] @relation("UserApprovals")
+  approvalsMade UserApproval[] @relation("AdminApprovals")
 
+  @@index([status, createdAt])
   @@map("users")
+}
+
+model Account {
+  id                String    @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  expiresAt         DateTime? @db.Timestamptz
+  createdAt         DateTime  @default(now()) @db.Timestamptz
+  updatedAt         DateTime  @updatedAt @db.Timestamptz
+
+  // ✅ Add relation name here
+  user User @relation("UserToAccount", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
 }
 
 model Room {
   id        String   @id @default(cuid())
   name      String   @unique
   icon      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @db.Timestamptz
+  updatedAt DateTime @updatedAt @db.Timestamptz
 
   // Relations
-  events    Event[]
+  events Event[]
 
   @@map("rooms")
 }
 
 model Event {
-  id          String       @id @default(cuid())
+  id          String      @id @default(cuid())
   title       String
   description String?
-  startTime   DateTime
-  endTime     DateTime
-  status      EventStatus  @default(ACTIVE)
-  color       String       @default("bg-orange-600")
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  status      EventStatus @default(ACTIVE)
+  color       String?     @default("#EA580C")
+  startTime   DateTime    @db.Timestamptz
+  endTime     DateTime    @db.Timestamptz
+  createdAt   DateTime    @default(now()) @db.Timestamptz
+  updatedAt   DateTime    @updatedAt @db.Timestamptz
 
   // Relations
-  roomId      String
-  room        Room         @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roomId String
+  room   Room   @relation(fields: [roomId], references: [id], onDelete: Cascade)
 
   createdById String
-  createdBy   User         @relation("UserEvents", fields: [createdById], references: [id], onDelete: Cascade)
+  createdBy   User   @relation("UserEvents", fields: [createdById], references: [id], onDelete: Cascade)
 
-  @@index([roomId, startTime])
+  @@index([roomId, startTime, endTime])
   @@index([createdById])
   @@index([startTime, endTime])
   @@map("events")
 }
 
-/* Approval log of admin decisions */
+/**
+ * Approval log of admin decisions
+ */
 model UserApproval {
-  id         String            @id @default(cuid())
-  userId     String
-  adminId    String?           // optional so we can SetNull if admin is deleted
-  decision   ApprovalDecision
-  reason     String?
-  createdAt  DateTime          @default(now())
+  id        String           @id @default(cuid())
+  userId    String
+  adminId   String? // optional so we can SetNull if admin is deleted
+  decision  ApprovalDecision
+  reason    String?
+  createdAt DateTime         @default(now()) @db.Timestamptz
 
   // The user who was approved/rejected
-  user       User              @relation("UserApprovals", fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation("UserApprovals", fields: [userId], references: [id], onDelete: Cascade)
 
   // The admin who made the decision
-  admin      User?             @relation("AdminApprovals", fields: [adminId], references: [id], onDelete: SetNull)
+  admin User? @relation("AdminApprovals", fields: [adminId], references: [id], onDelete: SetNull)
 
   @@index([userId])
   @@index([adminId])
+  @@index([userId, createdAt])
 }
 
 enum ApprovalDecision {
   APPROVE
   REJECT
+  DELETE
+  RESTORE
 }

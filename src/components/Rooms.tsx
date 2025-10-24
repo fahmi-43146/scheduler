@@ -1,4 +1,15 @@
-import { Atom, Microscope, Calculator, FlaskConical, Dna, Telescope, Cpu, Mountain, Leaf, Bot } from "lucide-react";
+import {
+  Atom,
+  Microscope,
+  Calculator,
+  FlaskConical,
+  Dna,
+  Telescope,
+  Cpu,
+  Mountain,
+  Leaf,
+  Bot,
+} from "lucide-react";
 
 type Room = {
   id?: string;
@@ -29,7 +40,7 @@ export default function Rooms({
   onSelect?: (roomName: string, roomId?: string) => void;
 }) {
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex gap-3 overflow-x-auto md:flex-col md:overflow-x-visible w-full">
       {rooms.map(({ name, Icon, id }) => {
         const isActive = selectedRoomName === name;
         return (
@@ -43,13 +54,21 @@ export default function Rooms({
                 : "border-black/10 dark:border-white/15 bg-white dark:bg-gray-900 hover:bg-slate-50 dark:hover:bg-gray-800"
             }`}
           >
-            <Icon className={`w-5 h-5 ${isActive ? "text-orange-700" : "text-orange-600"}`} />
-            <span className={`text-body ${isActive ? "text-orange-700" : "text-orange-600"}`}>{name}</span>
+            <Icon
+              className={`w-5 h-5 ${
+                isActive ? "text-orange-700" : "text-orange-600"
+              }`}
+            />
+            <span
+              className={`text-body ${
+                isActive ? "text-orange-700" : "text-orange-600"
+              }`}
+            >
+              {name}
+            </span>
           </button>
         );
       })}
     </div>
   );
 }
-
-

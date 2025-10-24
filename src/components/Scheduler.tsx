@@ -8,7 +8,7 @@ type EventItem = {
   id: string;
   title: string;
   start: Date; // within the displayed week
-  end: Date;   // within the displayed week
+  end: Date; // within the displayed week
   color?: string; // Tailwind class like "bg-blue-600"
 };
 
@@ -44,16 +44,30 @@ const minsSince = (d: Date, startHour: number) => {
 };
 
 /* ---------- the demo component ---------- */
-export default function WeekScheduleDemo({ selectedRoomName, events = [], onSlotClick }: { selectedRoomName?: string; events?: EventItem[]; onSlotClick?: (isoDate: string, hour: number) => void }) {
+export default function WeekScheduleDemo({
+  selectedRoomName,
+  events = [],
+  onSlotClick,
+}: {
+  selectedRoomName?: string;
+  events?: EventItem[];
+  onSlotClick?: (isoDate: string, hour: number) => void;
+}) {
   // demo config
   const roomName = selectedRoomName || "Mathematics";
   const startHour = 8;
   const endHour = 18; // exclusive bottom (8 AM to 6 PM)
-  const pxPerMinute = 0.8; // 0.8px per minute ⇒ ~480px tall for 10h
+  const pxPerMinute = 0.5; // 0.8px per minute ⇒ ~480px tall for 10h
 
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const weekStart = useMemo(() => startOfWeekMonday(selectedDate), [selectedDate]);
-  const weekDays = useMemo(() => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)), [weekStart]);
+  const weekStart = useMemo(
+    () => startOfWeekMonday(selectedDate),
+    [selectedDate]
+  );
+  const weekDays = useMemo(
+    () => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)),
+    [weekStart]
+  );
 
   // events are provided by parent (per selected room)
 
@@ -81,32 +95,40 @@ export default function WeekScheduleDemo({ selectedRoomName, events = [], onSlot
     <div className="rounded-xl border border-slate-200 shadow-sm overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between bg-white dark:bg-gray-900 border-b border-slate-200 dark:border-slate-700 px-4 py-3">
-        <div className="font-semibold text-slate-900 dark:text-slate-100">{roomName}</div>
+        <div className="font-semibold text-orange-600 dark:text-slate-100">
+          {roomName}
+        </div>
         <div className="mt-2">
-            <DatePicker onSelect={(d: Date) => setSelectedDate(d)} />
+          <DatePicker onSelect={(d: Date) => setSelectedDate(d)} />
+        </div>
+        <div className="flex flex-col items-center gap-2">
+          <div className="text-sm text-slate-600 dark:text-slate-300">
+            Week of{" "}
+            {weekStart.toLocaleDateString(undefined, {
+              month: "long",
+              day: "2-digit",
+              year: "numeric",
+            })}
           </div>
-       <div className="flex flex-col items-center gap-2">
-                
-                      <div className="text-sm text-slate-600 dark:text-slate-300">
-                          Week of{" "}
-                          {weekStart.toLocaleDateString(undefined, {
-                            month: "long",
-                            day: "2-digit",
-                            year: "numeric",
-                          })}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button type="button" onClick={() => setSelectedDate(d => addDays(d, -7))} aria-label="Previous week">
-                          <ChevronLeftIcon className="w-4 h-4 cursor-pointer" />
-                        </button>
-                        <button type="button" onClick={() => setSelectedDate(d => addDays(d, 7))} aria-label="Next week">
-                          <ChevronRightIcon className="w-4 h-4 cursor-pointer" />
-                        </button>
-                      </div>
-            
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setSelectedDate((d) => addDays(d, -7))}
+              aria-label="Previous week"
+            >
+              <ChevronLeftIcon className="w-4 h-4 cursor-pointer" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectedDate((d) => addDays(d, 7))}
+              aria-label="Next week"
+            >
+              <ChevronRightIcon className="w-4 h-4 cursor-pointer" />
+            </button>
+          </div>
+
           {/* Inline date picker */}
-          
-       </div>
+        </div>
       </div>
 
       {/* Day headers */}
@@ -115,7 +137,9 @@ export default function WeekScheduleDemo({ selectedRoomName, events = [], onSlot
         {weekDays.map((d, i) => (
           <div key={i} className="px-2 py-2 text-center font-medium">
             <div className="text-slate-900 dark:text-slate-100">{DAYS[i]}</div>
-            <div className="text-slate-500 dark:text-slate-400 font-normal">{d.getDate()}</div>
+            <div className="text-slate-500 dark:text-slate-400 font-normal">
+              {d.getDate()}
+            </div>
           </div>
         ))}
       </div>
@@ -124,14 +148,26 @@ export default function WeekScheduleDemo({ selectedRoomName, events = [], onSlot
       <div className="relative max-h-[60vh] overflow-y-auto">
         <div className="grid grid-cols-[80px_repeat(7,1fr)]">
           {/* Time labels */}
-          <div className="relative" style={{ height: totalMinutes * pxPerMinute }}>
-            {Array.from({ length: endHour - startHour + 1 }, (_, i) => startHour + i).map((h, i) => (
+          <div
+            className="relative"
+            style={{ height: totalMinutes * pxPerMinute }}
+          >
+            {Array.from(
+              { length: endHour - startHour + 1 },
+              (_, i) => startHour + i
+            ).map((h, i) => (
               <div
                 key={i}
                 className="absolute left-0 right-0 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-400"
                 style={{ top: i * 60 * pxPerMinute }}
               >
-                <div className={`ml-1 bg-white dark:bg-gray-900 px-1 w-min rounded text-slate-600 dark:text-slate-300 ${i === 0 ? 'mt-1' : '-mt-2'}`}>{pad2(h)}:00</div>
+                <div
+                  className={`ml-1 bg-white dark:bg-gray-900 px-1 w-min rounded text-slate-600 dark:text-slate-300 ${
+                    i === 0 ? "mt-1" : "-mt-2"
+                  }`}
+                >
+                  {pad2(h)}:00
+                </div>
               </div>
             ))}
           </div>
@@ -149,7 +185,12 @@ export default function WeekScheduleDemo({ selectedRoomName, events = [], onSlot
                   key={i}
                   onClick={() => {
                     // Build local YYYY-MM-DD to avoid UTC shifting a day back
-                    const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+                    const iso = `${d.getFullYear()}-${String(
+                      d.getMonth() + 1
+                    ).padStart(2, "0")}-${String(d.getDate()).padStart(
+                      2,
+                      "0"
+                    )}`;
                     onSlotClick?.(iso, startHour + i);
                   }}
                   className={`absolute left-0 right-0 cursor-pointer transition-colors border-t border-slate-200 dark:border-slate-800 hover:border-orange-300 hover:bg-orange-50 dark:hover:bg-orange-950/20 ${
@@ -163,21 +204,33 @@ export default function WeekScheduleDemo({ selectedRoomName, events = [], onSlot
                       ? "bg-orange-50 dark:bg-orange-950/10"
                       : ""
                   }`}
-                  style={{ top: i * 60 * pxPerMinute, height: 60 * pxPerMinute }}
+                  style={{
+                    top: i * 60 * pxPerMinute,
+                    height: 60 * pxPerMinute,
+                  }}
                   aria-label={`Hour ${startHour + i}:00`}
                 />
               ))}
 
               {/* Today indicator */}
               {isCurrentWeek && sameDay(d, new Date()) && nowY !== null && (
-                <div className="absolute left-0 right-0 h-px bg-orange-500" style={{ top: nowY }} />
+                <div
+                  className="absolute left-0 right-0 h-px bg-orange-500"
+                  style={{ top: nowY }}
+                />
               )}
 
               {/* Events */}
               <div className="absolute inset-0 pointer-events-none">
                 {(eventsByDay.get(dayIdx) || []).map((ev) => {
-                  const top = Math.max(0, minsSince(ev.start, startHour) * pxPerMinute);
-                  const height = Math.max(16, ((+ev.end - +ev.start) / 60000) * pxPerMinute);
+                  const top = Math.max(
+                    0,
+                    minsSince(ev.start, startHour) * pxPerMinute
+                  );
+                  const height = Math.max(
+                    16,
+                    ((+ev.end - +ev.start) / 60000) * pxPerMinute
+                  );
                   return (
                     <div
                       key={ev.id}
@@ -187,11 +240,14 @@ export default function WeekScheduleDemo({ selectedRoomName, events = [], onSlot
                       style={{ top, height }}
                       title={`${ev.title} — ${pad2(ev.start.getHours())}:${pad2(
                         ev.start.getMinutes()
-                      )}–${pad2(ev.end.getHours())}:${pad2(ev.end.getMinutes())}`}
+                      )}–${pad2(ev.end.getHours())}:${pad2(
+                        ev.end.getMinutes()
+                      )}`}
                     >
                       <div className="font-semibold truncate">{ev.title}</div>
                       <div className="opacity-90 truncate">
-                        {pad2(ev.start.getHours())}:{pad2(ev.start.getMinutes())} –{" "}
+                        {pad2(ev.start.getHours())}:
+                        {pad2(ev.start.getMinutes())} –{" "}
                         {pad2(ev.end.getHours())}:{pad2(ev.end.getMinutes())}
                       </div>
                     </div>
