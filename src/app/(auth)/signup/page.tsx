@@ -4,6 +4,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
+import { GoogleButton } from "@/components/icons/Google"; // ✅ add this
 
 export default function SignupForm() {
   const router = useRouter();
@@ -43,7 +44,6 @@ export default function SignupForm() {
       return;
     }
 
-    // auto-logged in by server → go to app
     router.replace("/");
     router.refresh();
   }
@@ -84,10 +84,23 @@ export default function SignupForm() {
 
       <button
         disabled={loading}
-        className="rounded bg-black text-white px-3 py-2"
+        className="w-full rounded bg-black text-white px-3 py-2"
       >
         {loading ? "Creating…" : "Create account"}
       </button>
+
+      {/* small “or” divider */}
+      <div className="relative py-2">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t border-gray-200" />
+        </div>
+        <div className="relative flex justify-center text-xs">
+          <span className="bg-white px-2 text-gray-500">or</span>
+        </div>
+      </div>
+
+      {/* ✅ Google at the very bottom of SIGN-UP */}
+      <GoogleButton />
 
       <p className="text-sm text-gray-600">
         Already have an account?{" "}

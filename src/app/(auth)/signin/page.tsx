@@ -1,7 +1,9 @@
+// app/signin/page.tsx (or wherever this component is exported from)
 "use client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { GoogleButton } from "@/components/icons/Google";
+// ❌ remove this line
+// import { GoogleButton } from "@/components/icons/Google";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -54,8 +56,7 @@ export default function LoginPage() {
       >
         {loading ? "Signing in…" : "Sign in"}
       </button>
-
-      <GoogleButton />
+      {/* GoogleButton removed from here */}
     </form>
   );
 }

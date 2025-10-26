@@ -17,52 +17,41 @@ export async function POST(
     return NextResponse.json({ error: 'Failed to approve user' }, { status: 500 })
   }
 }*/
-// app/api/admin/users/[id]/approve/route.ts
 export const runtime = "nodejs";
-import { NextResponse, NextRequest } from "next/server";
+
+import { NextResponse, type NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { cookies } from "next/headers";
-import { verifyToken } from "@/lib/jwt";
-import { TokenPayload } from "@/types/tokenPayload";
+import { requireAdmin } from "@/lib/guards";
 
-export async function POST(_: NextRequest, context: { params: Promise<{ id: string }> })  {
-  try{
-    const userId=(await context.params).id
-  const adminId = await getAdminId(); // below
-  
+export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { id: userId } = await params;           // ← await params (your pattern)
+    if (!userId) return NextResponse.json({ error: "Missing user id" }, { status: 400 });
 
-  const result = await prisma.$transaction(async (tx) => {
-    const u = await tx.user.update({ where: { id: userId }, data: { status: "APPROVED", deletedAt: null } });
-    await tx.userApproval.create({ data: { userId, adminId, decision: "APPROVE", reason: "Approved by admin" } });
-    return u.id;
-  });
+    const admin = await requireAdmin();            // ← unified admin check
 
-  return NextResponse.json({ success: true, userId: result });
-  } catch (error) {
-  const message = (error as Error).message;
-  const status =
-    message.includes("Missing") ? 401 :
-    message.includes("Invalid") ? 403 :
-    message.includes("Forbidden") ? 403 :
-    500;
+    const { id } = await prisma.user.update({
+      where: { id: userId },
+      data: { status: "APPROVED", deletedAt: null },
+      select: { id: true },
+    });
 
-  return NextResponse.json({ error: message }, { status });
+    // If you DO have an audit table, keep this block; otherwise delete it.
+     await prisma.userApproval.create({
+      data: { userId, adminId: admin.id, decision: "APPROVE", reason: "Approved by admin" },
+    });
+
+    return NextResponse.json({ success: true, userId: id });
+  } catch (err: unknown) {
+    
+
+    const e = err as { code?: string; status?: number; message?: string };
+    if (e?.code === "P2025") {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+    return NextResponse.json(
+      { error: e?.message ?? "Internal error" },
+      { status: e?.status ?? 500 }
+    );
+  }
 }
-
-}
-
-async function getAdminId(): Promise<string> {
-  const cookieStore = await cookies();
-  const cookieName = process.env.COOKIE_NAME ?? '';
-  const token = cookieStore.get(cookieName)?.value;
-
-  if (!token) throw new Error("Missing or invalid token");
-
-  const payload = await verifyToken(token) as TokenPayload | null;
-  if (!payload) throw new Error("Invalid token payload");
-
-  if (payload.role !== "ADMIN") throw new Error("Forbidden: Admins only");
-
-  return payload.userId;
-}
-

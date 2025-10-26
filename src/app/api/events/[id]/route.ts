@@ -1,4 +1,58 @@
-import { NextRequest, NextResponse } from 'next/server'
+// app/api/events/[id]/route.ts
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { getCurrentUser } from "@/lib/auth";
+import { z } from "zod";
+
+export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
+  const me = await getCurrentUser();
+  if (!me) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  await prisma.event.delete({ where: { id: params.id } });
+  return NextResponse.json({ ok: true }, { headers: { "Cache-Control": "no-store" } });
+}
+
+const updateSchema = z.object({
+  title: z.string().min(1).max(200).optional(),
+  description: z.string().max(1000).optional(),
+  color: z.string().max(32).optional(),
+  startTime: z.string().datetime().optional(), // ISO
+  endTime: z.string().datetime().optional(),
+});
+
+export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+  const me = await getCurrentUser();
+  if (!me) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const body = await req.json();
+  const parse = updateSchema.safeParse(body);
+  if (!parse.success) {
+    return NextResponse.json({ error: "Invalid body", details: parse.error.flatten() }, { status: 400 });
+  }
+
+  const { title, description, color, startTime, endTime } = parse.data;
+  if (startTime && endTime && !(new Date(endTime) > new Date(startTime))) {
+    return NextResponse.json({ error: "End must be after start" }, { status: 400 });
+  }
+
+  const updated = await prisma.event.update({
+    where: { id: params.id },
+    data: {
+      title: title ?? undefined,
+      description: description ?? undefined,
+      color: color ?? undefined,
+      startTime: startTime ? new Date(startTime) : undefined,
+      endTime: endTime ? new Date(endTime) : undefined,
+    },
+    select: { id: true, title: true, description: true, color: true, startTime: true, endTime: true, roomId: true },
+  });
+
+  return NextResponse.json(updated, { headers: { "Cache-Control": "no-store" } });
+}
+
+
+
+/*import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
 // GET /api/events/[id] - Get a specific event
@@ -81,4 +135,4 @@ export async function DELETE(
     )
   }
 }
-
+*/

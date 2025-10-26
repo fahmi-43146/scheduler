@@ -1,4 +1,121 @@
+// app/api/events/route.ts
 import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { getCurrentUser } from "@/lib/auth";
+import { z } from "zod";
+
+const listSchema = z.object({
+  roomId: z.string().cuid().optional(),
+  roomName: z.string().min(1).optional(),       // fallback if you only have names in UI
+  from: z.string().datetime().optional(),       // ISO
+  to: z.string().datetime().optional(),
+});
+
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const parse = listSchema.safeParse({
+    roomId: searchParams.get("roomId") || undefined,
+    roomName: searchParams.get("roomName") || undefined,
+    from: searchParams.get("from") || undefined,
+    to: searchParams.get("to") || undefined,
+  });
+  if (!parse.success) {
+    return NextResponse.json({ error: "Invalid query", details: parse.error.flatten() }, { status: 400 });
+  }
+  const { roomId, roomName, from, to } = parse.data;
+
+  // Resolve room by name if no id was provided
+  let roomFilter: { id: string } | undefined;
+  if (roomId) {
+    roomFilter = { id: roomId };
+  } else if (roomName) {
+    const room = await prisma.room.findUnique({ where: { name: roomName }, select: { id: true } });
+    if (!room) return NextResponse.json([], { headers: { "Cache-Control": "no-store" } });
+    roomFilter = { id: room.id };
+  }
+
+  const where: any = {};
+  if (roomFilter) where.roomId = roomFilter.id;
+  if (from || to) {
+    where.startTime = {};
+    if (from) where.startTime.gte = new Date(from);
+    if (to) where.startTime.lte = new Date(to);
+  }
+
+  const events = await prisma.event.findMany({
+    where,
+    orderBy: { startTime: "asc" },
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      color: true,
+      startTime: true,
+      endTime: true,
+      roomId: true,
+      createdById: true,
+    },
+  });
+
+  return NextResponse.json(events, { headers: { "Cache-Control": "no-store" } });
+}
+
+const createSchema = z.object({
+  roomId: z.string().cuid(),
+  title: z.string().min(1).max(200),
+  description: z.string().max(1000).optional(),
+  color: z.string().max(32).optional(),
+  // From your EventForm: date "YYYY-MM-DD", time "HH:mm"
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  start: z.string().regex(/^\d{2}:\d{2}$/),
+  end: z.string().regex(/^\d{2}:\d{2}$/),
+});
+
+export async function POST(req: Request) {
+  // Auth (JWT cookie)
+  const me = await getCurrentUser();
+  if (!me) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (me.status !== "APPROVED") return NextResponse.json({ error: "Not approved" }, { status: 403 });
+
+  const body = await req.json();
+  const parse = createSchema.safeParse(body);
+  if (!parse.success) {
+    return NextResponse.json({ error: "Invalid body", details: parse.error.flatten() }, { status: 400 });
+  }
+  const { roomId, title, description, color, date, start, end } = parse.data;
+
+  // Build timestamps. Choose one strategy and stick to it:
+  // (A) UTC storage: `${date}T${start}:00Z` (simple, consistent)
+  const startTime = new Date(`${date}T${start}:00Z`);
+  const endTime = new Date(`${date}T${end}:00Z`);
+  if (!(endTime > startTime)) {
+    return NextResponse.json({ error: "End must be after start" }, { status: 400 });
+  }
+
+  const created = await prisma.event.create({
+    data: {
+      title,
+      description: description ?? null,
+      color: color ?? "#EA580C",
+      startTime,
+      endTime,
+      room: { connect: { id: roomId } },
+      createdBy: { connect: { id: me.id } },
+    },
+    select: {
+      id: true, title: true, description: true, color: true,
+      startTime: true, endTime: true, roomId: true,
+    },
+  });
+
+  return NextResponse.json(created, {
+    status: 201,
+    headers: { "Cache-Control": "no-store" },
+  });
+}
+
+
+/*import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 
