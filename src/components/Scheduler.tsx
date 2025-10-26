@@ -1,8 +1,13 @@
 "use client";
 
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  MoreHorizontal,
+} from "lucide-react";
 import { useMemo, useState, useEffect, useRef } from "react";
 import DatePicker from "./DatePicker";
+import { useAdminEventActions } from "@/hooks/useAdminEventActions";
 
 type EventItem = {
   id: string;
@@ -10,6 +15,7 @@ type EventItem = {
   start: Date;
   end: Date;
   color?: string;
+  status?: "ACTIVE" | "CANCELLED"; // optional but recommended
 };
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -45,16 +51,27 @@ export default function Scheduler({
   events = [],
   onSlotClick,
   onWeekChange,
+  isAdmin = false,
+  updateEvents, // 👈 new prop for optimistic updates
 }: {
   selectedRoomName?: string;
   events?: EventItem[];
   onSlotClick?: (isoDate: string, hour: number) => void;
   onWeekChange?: (weekStart: Date, weekEnd: Date) => void;
+  isAdmin?: boolean;
+  updateEvents?: (fn: (draft: EventItem[]) => void) => void;
 }) {
+  // wire updater into the shared hook
+  const { cancel, restore, hardDelete, isLoading } =
+    useAdminEventActions<EventItem>({
+      updateEvents,
+    });
+  const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
+
   const roomName = selectedRoomName || "Mathematics";
   const startHour = 8;
-  const endHour = 20; // show until 8 PM
-  const pxPerMinute = 0.35; // keeps grid roughly same visual height (no scroll)
+  const endHour = 20;
+  const pxPerMinute = 0.35;
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const weekStart = useMemo(
     () => startOfWeekMonday(selectedDate),
@@ -97,6 +114,10 @@ export default function Scheduler({
     isCurrentWeek && now.getHours() >= startHour && now.getHours() < endHour
       ? clampY(minsSince(now, startHour) * pxPerMinute)
       : null;
+
+  useEffect(() => {
+    setMenuOpenId(null);
+  }, [weekStart.toISOString()]);
 
   return (
     <div className="rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden bg-white dark:bg-slate-950">
@@ -153,12 +174,10 @@ export default function Scheduler({
       <div className="relative overflow-x-auto">
         <div className="grid grid-cols-[88px_repeat(7,1fr)]">
           {/* Time rail */}
-          {/* Time rail */}
           <div
             className="relative bg-slate-50 dark:bg-slate-900/50 border-r border-slate-200 dark:border-slate-700"
             style={{ height: gridHeightPx }}
           >
-            {/* Hour lines (unchanged) */}
             {Array.from(
               { length: endHour - startHour + 1 },
               (_, i) => startHour + i
@@ -177,12 +196,12 @@ export default function Scheduler({
               );
             })}
 
-            {/* Centered hour labels — one per slot */}
+            {/* Centered hour labels */}
             {Array.from(
               { length: endHour - startHour },
               (_, i) => startHour + i
             ).map((h, i) => {
-              const centerY = clampY((i * 60 + 30) * pxPerMinute); // middle of the hour
+              const centerY = clampY((i * 60 + 30) * pxPerMinute);
               return (
                 <div
                   key={`label-${h}`}
@@ -208,6 +227,7 @@ export default function Scheduler({
               className="relative bg-white dark:bg-slate-950 border-l border-slate-200 dark:border-slate-700"
               style={{ height: gridHeightPx }}
             >
+              {/* Clickable hour slots */}
               {Array.from({ length: endHour - startHour }, (_, i) => (
                 <div
                   key={i}
@@ -250,7 +270,7 @@ export default function Scheduler({
                 />
               )}
 
-              {/* Events (clamped to grid) */}
+              {/* Events */}
               <div className="absolute inset-0 pointer-events-none">
                 {(eventsByDay.get(dayIdx) || []).map((ev) => {
                   const startY = minsSince(ev.start, startHour) * pxPerMinute;
@@ -260,12 +280,18 @@ export default function Scheduler({
                   const height = Math.max(16, bottom - top);
                   if (bottom <= top) return null;
 
+                  const isCancelled = (ev.status ?? "ACTIVE") === "CANCELLED";
+
                   return (
                     <div
                       key={ev.id}
                       className={`absolute left-1 right-1 rounded-md border border-opacity-20 text-xs leading-snug text-white p-1.5 pointer-events-auto shadow-md hover:shadow-lg transition-shadow ${
                         ev.color || "bg-orange-600"
-                      } hover:brightness-110`}
+                      } ${
+                        isCancelled
+                          ? "opacity-70 grayscale"
+                          : "hover:brightness-110"
+                      }`}
                       style={{ top, height }}
                       title={`${ev.title} — ${pad2(ev.start.getHours())}:${pad2(
                         ev.start.getMinutes()
@@ -273,13 +299,93 @@ export default function Scheduler({
                         ev.end.getMinutes()
                       )}`}
                     >
-                      <div className="font-semibold truncate text-xs">
-                        {ev.title}
-                      </div>
-                      <div className="opacity-90 truncate text-xs">
-                        {pad2(ev.start.getHours())}:
-                        {pad2(ev.start.getMinutes())} –{" "}
-                        {pad2(ev.end.getHours())}:{pad2(ev.end.getMinutes())}
+                      <div className="flex items-start justify-between gap-1">
+                        <div className="min-w-0">
+                          <div className="font-semibold truncate text-xs">
+                            {ev.title}
+                          </div>
+                          <div className="opacity-90 truncate text-[11px]">
+                            {pad2(ev.start.getHours())}:
+                            {pad2(ev.start.getMinutes())} –{" "}
+                            {pad2(ev.end.getHours())}:
+                            {pad2(ev.end.getMinutes())}
+                          </div>
+                          {isCancelled && (
+                            <span className="mt-0.5 inline-block rounded bg-black/20 px-1 py-[1px] text-[10px] uppercase">
+                              Cancelled
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Admin actions */}
+                        {isAdmin && (
+                          <div className="relative">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setMenuOpenId(
+                                  menuOpenId === ev.id ? null : ev.id
+                                );
+                              }}
+                              className="pointer-events-auto rounded p-1 hover:bg-black/10"
+                              aria-label="Event actions"
+                            >
+                              <MoreHorizontal className="w-4 h-4" />
+                            </button>
+
+                            {menuOpenId === ev.id && (
+                              <div
+                                className="absolute right-0 z-10 mt-1 w-36 rounded-md border bg-white p-1 text-xs text-black shadow-lg"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                {isCancelled ? (
+                                  <button
+                                    onClick={() => {
+                                      restore(ev.id);
+                                      setMenuOpenId(null);
+                                    }}
+                                    disabled={isLoading(ev.id)}
+                                    className="block w-full rounded px-2 py-1 text-left hover:bg-gray-100 disabled:opacity-50"
+                                  >
+                                    {isLoading(ev.id)
+                                      ? "Restoring…"
+                                      : "Restore"}
+                                  </button>
+                                ) : (
+                                  <button
+                                    onClick={() => {
+                                      cancel(ev.id);
+                                      setMenuOpenId(null);
+                                    }}
+                                    disabled={isLoading(ev.id)}
+                                    className="block w-full rounded px-2 py-1 text-left hover:bg-gray-100 disabled:opacity-50"
+                                  >
+                                    {isLoading(ev.id)
+                                      ? "Cancelling…"
+                                      : "Cancel"}
+                                  </button>
+                                )}
+
+                                <button
+                                  onClick={() => {
+                                    if (
+                                      window.confirm(
+                                        "Delete this event permanently?"
+                                      )
+                                    ) {
+                                      hardDelete(ev.id);
+                                      setMenuOpenId(null);
+                                    }
+                                  }}
+                                  disabled={isLoading(ev.id)}
+                                  className="mt-1 block w-full rounded px-2 py-1 text-left text-red-600 hover:bg-red-100 disabled:opacity-50"
+                                >
+                                  {isLoading(ev.id) ? "Deleting…" : "Delete"}
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </div>
                   );

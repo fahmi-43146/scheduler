@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Rooms from "@/components/Rooms";
+import { useAdminEventActions } from "@/hooks/useAdminEventActions";
 import Scheduler from "@/components/Scheduler";
 import EventForm, { NewEvent } from "@/components/EventForm";
 import { Button } from "@/components/ui/button";
@@ -24,7 +25,7 @@ function addDays(d: Date, days: number) {
 
 type RoomDto = { id: string; name: string; icon?: string | null };
 
-export default function HomeClient() {
+export default function HomeClient({ isAdmin }: { isAdmin: boolean }) {
   const [mounted, setMounted] = useState(false);
 
   const [rooms, setRooms] = useState<RoomDto[]>([]);
@@ -47,6 +48,13 @@ export default function HomeClient() {
     weekStart,
     weekEnd,
   });
+  const updateEvents = (fn: (draft: typeof events) => void) => {
+    setEvents((prev) => {
+      const copy = prev.map((e) => ({ ...e })); // shallow clone
+      fn(copy);
+      return copy;
+    });
+  };
 
   useEffect(() => setMounted(true), []);
 
@@ -203,6 +211,8 @@ export default function HomeClient() {
               setIsDialogOpen(true);
             }}
             onWeekChange={handleWeekChange}
+            isAdmin={isAdmin}
+            updateEvents={updateEvents}
           />
         </main>
       </div>
