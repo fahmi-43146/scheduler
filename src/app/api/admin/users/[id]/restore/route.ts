@@ -3,20 +3,27 @@ export const runtime = "nodejs";
 
 import { NextResponse, type NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { UserStatus, ApprovalDecision } from "@prisma/client";
 import { requireAdmin } from "@/lib/guards";
 
-export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function POST(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    const { id: userId } = await params; // Next 15: await params
-    if (!userId) return NextResponse.json({ error: "Missing user id" }, { status: 400 });
+    const { id: userId } = await params; // Next 15 async params
+    if (!userId) {
+      return NextResponse.json({ error: "Missing user id" }, { status: 400 });
+    }
 
     const admin = await requireAdmin();
 
     const resultId = await prisma.$transaction(async (tx) => {
       const u = await tx.user.update({
         where: { id: userId },
-        data: { deletedAt: null, status: UserStatus.APPROVED },
+        data: {
+          deletedAt: null,
+          status: "APPROVED",      // ✅ Prisma v5: use string literal (UserStatus)
+        },
         select: { id: true },
       });
 
@@ -24,12 +31,12 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
         data: {
           userId,
           adminId: admin.id,
-          decision: ApprovalDecision.RESTORE,
+          decision: "RESTORE",     // ✅ string literal (ApprovalDecision)
           reason: "Restored by admin",
         },
       });
 
-      return u.id; // string
+      return u.id;
     });
 
     return NextResponse.json({ success: true, userId: resultId });
