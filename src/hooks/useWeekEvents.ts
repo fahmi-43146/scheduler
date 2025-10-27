@@ -46,7 +46,7 @@ export function useWeekEvents(opts: {
 
       const res = await fetch(url.toString(), { cache: "no-store" });
       if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
-      const data: EventDto[] = await res.json();
+      const data: EventDto[] = (await res.json()).events;
 
       setEvents(
         data.map((e) => ({
