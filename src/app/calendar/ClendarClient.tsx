@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 // (Rooms import not needed for logic anymore, but leaving your other logic intact)
-import Rooms from "@/components/Rooms";
+//import Rooms from "@/components/Rooms";
 import Scheduler from "@/components/Scheduler";
 import EventForm, { NewEvent } from "@/components/EventForm";
 import { Button } from "@/components/ui/button";

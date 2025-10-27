@@ -52,7 +52,8 @@ export default function Scheduler({
   onSlotClick,
   onWeekChange,
   isAdmin = false,
-  updateEvents, // 👈 new prop for optimistic updates
+  updateEvents,
+  hourHeight = 40,
 }: {
   selectedRoomName?: string;
   events?: EventItem[];
@@ -60,6 +61,7 @@ export default function Scheduler({
   onWeekChange?: (weekStart: Date, weekEnd: Date) => void;
   isAdmin?: boolean;
   updateEvents?: (fn: (draft: EventItem[]) => void) => void;
+  hourHeight?: number;
 }) {
   // wire updater into the shared hook
   const { cancel, restore, hardDelete, isLoading } =
@@ -71,7 +73,7 @@ export default function Scheduler({
   const roomName = selectedRoomName || "Mathematics";
   const startHour = 8;
   const endHour = 20;
-  const pxPerMinute = 0.35;
+  const pxPerMinute = hourHeight / 60;
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const weekStart = useMemo(
     () => startOfWeekMonday(selectedDate),
@@ -82,7 +84,7 @@ export default function Scheduler({
     () => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)),
     [weekStart]
   );
-
+  const weekStartKey = useMemo(() => weekStart.getTime(), [weekStart]);
   const lastRangeKeyRef = useRef<string>("");
   useEffect(() => {
     if (!onWeekChange) return;
@@ -117,7 +119,7 @@ export default function Scheduler({
 
   useEffect(() => {
     setMenuOpenId(null);
-  }, [weekStart.toISOString()]);
+  }, [weekStartKey]);
 
   return (
     <div className="rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden bg-white dark:bg-slate-950">

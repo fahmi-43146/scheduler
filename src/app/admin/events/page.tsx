@@ -1,5 +1,5 @@
 import { headers, cookies } from "next/headers";
-import { toast } from "sonner"; // SSR-safe usage not needed; we'll use client for toasts
+//import { toast } from "sonner"; // SSR-safe usage not needed; we'll use client for toasts
 import EventsPageClient, { type AdminEventRow } from "./EventsPageClient";
 
 export const dynamic = "force-dynamic";

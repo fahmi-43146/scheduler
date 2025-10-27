@@ -11,4 +11,5 @@ export function setTokenCookie(response: NextResponse, token: string) {
     path: '/',
     maxAge: 60 * 60 * 24 *7, 
   });
+  
 }

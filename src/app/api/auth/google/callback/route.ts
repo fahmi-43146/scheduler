@@ -62,11 +62,11 @@ export async function GET(req: Request) {
     where: { email },
     update: { name: profile.name ?? undefined },
     create: { email, name: profile.name ?? null },
-    select: { id: true, email: true, name: true },
+     select: { id: true, email: true, name: true, role: true }, 
   });
 
   // 4) issue your SAME JWT payload + cookie
-  const jwt = await signToken({ userId: user.id, email: user.email, provider: "google" });
+  const jwt = await signToken({ userId: user.id, email: user.email, provider: "google",role: user.role, });
   const res = NextResponse.redirect(new URL("/", req.url));
   setTokenCookie(res, jwt); // reuses your helper
   return res;

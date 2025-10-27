@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { z } from "zod";
-
+import { Prisma } from "@prisma/client";
 const listSchema = z.object({
   roomId: z.string().cuid().optional(),
   roomName: z.string().min(1).optional(),       // fallback if you only have names in UI
@@ -34,7 +34,9 @@ export async function GET(req: Request) {
     roomFilter = { id: room.id };
   }
 
-  const where: any = {};
+  const where: Prisma.EventWhereInput = {};
+
+
   if (roomFilter) where.roomId = roomFilter.id;
   if (from || to) {
     where.startTime = {};
