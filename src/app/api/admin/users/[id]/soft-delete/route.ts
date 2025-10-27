@@ -4,6 +4,7 @@ export const runtime = "nodejs";
 import { NextResponse, type NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/guards";
+import type { Prisma } from "@prisma/client"; // ✅ types only
 
 export async function POST(
   _req: NextRequest,
@@ -17,12 +18,12 @@ export async function POST(
 
     const admin = await requireAdmin();
 
-    const resultId = await prisma.$transaction(async (tx) => {
+    const resultId = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const u = await tx.user.update({
         where: { id: userId },
         data: {
           deletedAt: new Date(),   // soft delete
-          status: "SUSPENDED",     // ✅ string literal (UserStatus)
+          status: "SUSPENDED",     // Prisma v5: string literal
         },
         select: { id: true },
       });
@@ -31,7 +32,7 @@ export async function POST(
         data: {
           userId,
           adminId: admin.id,
-          decision: "DELETE",      // ✅ string literal (ApprovalDecision)
+          decision: "DELETE",      // Prisma v5: string literal
           reason: "Soft-deleted by admin",
         },
       });
