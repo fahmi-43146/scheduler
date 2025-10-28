@@ -34,8 +34,12 @@ export default function SignUpPage() {
       if (!res.ok)
         throw new Error(data?.error || `Signup failed (${res.status})`);
       router.push("/"); // adjust
-    } catch (err: any) {
-      setError(err.message || "Couldn’t sign you up.");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Something went wrong");
+      }
     } finally {
       setPending(false);
     }
@@ -51,7 +55,7 @@ export default function SignUpPage() {
         {/* Google FIRST */}
         <a
           href="/api/auth/google"
-          className="block w-full h-12 rounded-md border border-slate-300 dark:border-slate-700 flex items-center justify-center gap-2 text-slate-800 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800 transition mb-5"
+          className=" w-full h-12 rounded-md border border-slate-300 dark:border-slate-700 flex items-center justify-center gap-2 text-slate-800 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800 transition mb-5"
           aria-label="Sign up with Google"
         >
           <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden>

@@ -4,8 +4,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export const metadata = { title: "Sign in" };
-
 export default function SignInPage() {
   const router = useRouter();
   const [pending, setPending] = useState(false);
@@ -35,8 +33,12 @@ export default function SignInPage() {
         throw new Error(data?.error || `Sign in failed (${res.status})`);
 
       router.push("/dashboard"); // change to your post-login route
-    } catch (err: any) {
-      setError(err.message || "Couldn’t sign you in.");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Something went wrong");
+      }
     } finally {
       setPending(false);
     }
