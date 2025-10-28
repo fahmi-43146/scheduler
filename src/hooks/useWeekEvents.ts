@@ -11,6 +11,9 @@ export type EventDto = {
   startTime: string; // ISO
   endTime: string; // ISO
   roomId: string;
+  status: "ACTIVE" | "CANCELLED";
+
+
 };
 
 export type EventItem = {
@@ -19,6 +22,9 @@ export type EventItem = {
   start: Date;
   end: Date;
   color?: string;
+  status: "ACTIVE" | "CANCELLED";
+
+
 };
 
 export function useWeekEvents(opts: {
@@ -53,6 +59,7 @@ export function useWeekEvents(opts: {
           id: e.id,
           title: e.title,
           color: e.color ?? undefined,
+          status: e.status,
           start: new Date(e.startTime),
           end: new Date(e.endTime),
         }))

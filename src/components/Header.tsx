@@ -41,7 +41,7 @@ export default async function Header() {
   return (
     <header
       className="sticky top-0 z-50 border-b border-border
-             bg-gradient-to-r from-primary via-primary to-[#166FE5]
+             bg-linear-to-r from-primary via-primary to-[#166FE5]
              dark:from-primary dark:via-primary dark:to-[#166FE5]
              backdrop-blur-sm"
     >
@@ -73,7 +73,7 @@ export default async function Header() {
             </Link>
           ) : (
             <div className="flex items-center gap-3">
-              <span className="hidden sm:inline text-xs sm:text-sm leading-none text-primary-foreground/70 truncate max-w-[12rem]">
+              <span className="hidden sm:inline text-xs sm:text-sm leading-none text-primary-foreground/70 truncate max-w-48">
                 {me?.name ?? ""}
               </span>
               <form action={signOut}>

@@ -43,13 +43,16 @@ export async function GET(req: NextRequest) {
     where,
     orderBy,
     select: {
-      id: true,
-      title: true,
-      status: true,
-      startTime: true,
-      endTime: true,
-      room: { select: { id: true, name: true } },
-    },
+  id: true,
+  title: true,
+  color: true,         // ✅ Add this line
+  status: true,
+  startTime: true,
+  endTime: true,
+  room: { select: { id: true, name: true } },
+}
+
+,
   });
 
   return NextResponse.json({ events });
