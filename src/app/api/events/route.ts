@@ -43,14 +43,52 @@ export async function GET(req: NextRequest) {
     where,
     orderBy,
     select: {
-      id: true,
-      title: true,
-      status: true,
-      startTime: true,
-      endTime: true,
-      room: { select: { id: true, name: true } },
-    },
+  id: true,
+  title: true,
+  color: true,         // ✅ Add this line
+  status: true,
+  startTime: true,
+  endTime: true,
+  room: { select: { id: true, name: true } },
+}
+
+,
   });
 
   return NextResponse.json({ events });
+}
+
+export async function POST(req: NextRequest) {
+  const me = await getCurrentUser();
+  if (!me) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const isAdmin = me.role === "ADMIN";
+  const isApproved = me.status === "APPROVED";
+  if (!isAdmin && !isApproved) {
+    return NextResponse.json({ error: "Account pending approval" }, { status: 403 });
+  }
+
+  const { title, description, roomId, startTime, endTime, color } = await req.json();
+  
+  if (!title || !roomId || !startTime || !endTime) {
+    return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+  }
+  
+  if (new Date(startTime) >= new Date(endTime)) {
+    return NextResponse.json({ error: "Invalid time range" }, { status: 400 });
+  }
+  
+  const event = await prisma.event.create({
+    data: {
+      title,
+      description,
+      roomId,
+      startTime: new Date(startTime),
+      endTime: new Date(endTime),
+      color,
+      createdById: me.id,
+    },
+  });
+
+  return NextResponse.json({ event });
 }

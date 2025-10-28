@@ -59,7 +59,7 @@ export default function RoomsBar({
         "w-full",
         sticky &&
           "sticky top-0 z-30 -mx-1 md:mx-0 px-2 py-2 border-b border-slate-200/70 dark:border-slate-800/60 " +
-            "bg-white/85 dark:bg-gray-900/80 backdrop-blur supports-[backdrop-filter]:bg-white/60 supports-[backdrop-filter]:dark:bg-gray-900/60",
+            "bg-white/85 dark:bg-gray-900/80 backdrop-blur supports-backdrop-filter:bg-white/60 supports-backdrop-filter:dark:bg-gray-900/60",
         elevated && sticky && "shadow-sm",
         "transition-shadow duration-300",
         className

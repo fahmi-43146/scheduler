@@ -313,7 +313,7 @@ export default function Scheduler({
                             {pad2(ev.end.getMinutes())}
                           </div>
                           {isCancelled && (
-                            <span className="mt-0.5 inline-block rounded bg-black/20 px-1 py-[1px] text-[10px] uppercase">
+                            <span className="mt-0.5 inline-block rounded bg-black/20 px-1 py-px text-[10px] uppercase">
                               Cancelled
                             </span>
                           )}

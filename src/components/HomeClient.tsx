@@ -87,9 +87,8 @@ export default function HomeClient({ isAdmin = false }: { isAdmin?: boolean }) {
         title: e.title,
         description: e.organizer ? `Organizer: ${e.organizer}` : undefined,
         color: e.color,
-        date: e.date,
-        start: e.start,
-        end: e.end,
+        startTime: `${e.date}T${e.start}:00.000Z`,
+        endTime: `${e.date}T${e.end}:00.000Z`,
       }),
     });
 
@@ -113,7 +112,8 @@ export default function HomeClient({ isAdmin = false }: { isAdmin?: boolean }) {
       return;
     }
 
-    const created = await res.json();
+    const response = await res.json();
+    const created = response.event;
     setEvents((prev) => [
       ...prev,
       {

@@ -1,3 +1,4 @@
+//src\app\calendar\ClendarClient.tsx
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -88,9 +89,8 @@ export default function CalendarClient() {
         title: e.title,
         description: e.organizer ? `Organizer: ${e.organizer}` : undefined,
         color: e.color,
-        date: e.date, // YYYY-MM-DD
-        start: e.start, // HH:mm
-        end: e.end, // HH:mm
+        startTime: `${e.date}T${e.start}:00.000Z`,
+        endTime: `${e.date}T${e.end}:00.000Z`,
       }),
     });
 
@@ -116,7 +116,8 @@ export default function CalendarClient() {
       return;
     }
 
-    const created = await res.json();
+    const response = await res.json();
+    const created = response.event;
     setEvents((prev) => [
       ...prev,
       {
@@ -125,6 +126,7 @@ export default function CalendarClient() {
         color: created.color ?? undefined,
         start: new Date(created.startTime),
         end: new Date(created.endTime),
+        status: created.status,
       },
     ]);
     setIsDialogOpen(false);

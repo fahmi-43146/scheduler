@@ -3,7 +3,7 @@ import { ArrowRight, BookOpen, Users, Award, Microscope } from "lucide-react";
 export default function AboutPage() {
   return (
     <main className="min-h-screen bg-background">
-      {/* Navigation */}
+      {/* Navigation 
       <nav className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
@@ -37,7 +37,7 @@ export default function AboutPage() {
             </div>
           </div>
         </div>
-      </nav>
+      </nav>*/}
 
       {/* Hero Section */}
       <section className="relative overflow-hidden border-b border-border">
@@ -64,7 +64,7 @@ export default function AboutPage() {
                 </button>
               </div>
             </div>
-            <div className="relative h-96 bg-gradient-to-br from-secondary to-muted rounded-2xl border border-border flex items-center justify-center">
+            <div className="relative h-96 bg-linear-to-br from-secondary to-muted rounded-2xl border border-border flex items-center justify-center">
               <div className="text-center">
                 <Microscope className="w-24 h-24 mx-auto text-muted-foreground mb-4 opacity-50" />
                 <p className="text-muted-foreground">Hero Image Placeholder</p>
@@ -78,7 +78,7 @@ export default function AboutPage() {
       <section id="about" className="border-b border-border py-20 md:py-32">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="relative h-96 bg-gradient-to-br from-secondary to-muted rounded-2xl border border-border flex items-center justify-center">
+            <div className="relative h-96 bg-linear-to-br from-secondary to-muted rounded-2xl border border-border flex items-center justify-center">
               <p className="text-muted-foreground">Campus Image Placeholder</p>
             </div>
             <div className="space-y-6">
@@ -250,7 +250,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Footer */}
+      {/* Footer 
       <footer className="border-t border-border bg-secondary/50 py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
@@ -378,7 +378,7 @@ export default function AboutPage() {
             </div>
           </div>
         </div>
-      </footer>
+      </footer>*/}
     </main>
   );
 }

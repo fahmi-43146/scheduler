@@ -11,6 +11,9 @@ export type EventDto = {
   startTime: string; // ISO
   endTime: string; // ISO
   roomId: string;
+  status: "ACTIVE" | "CANCELLED";
+
+
 };
 
 export type EventItem = {
@@ -19,6 +22,9 @@ export type EventItem = {
   start: Date;
   end: Date;
   color?: string;
+  status: "ACTIVE" | "CANCELLED";
+
+
 };
 
 export function useWeekEvents(opts: {
@@ -46,13 +52,14 @@ export function useWeekEvents(opts: {
 
       const res = await fetch(url.toString(), { cache: "no-store" });
       if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
-      const data: EventDto[] = await res.json();
+      const data: EventDto[] = (await res.json()).events;
 
       setEvents(
         data.map((e) => ({
           id: e.id,
           title: e.title,
           color: e.color ?? undefined,
+          status: e.status,
           start: new Date(e.startTime),
           end: new Date(e.endTime),
         }))

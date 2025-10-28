@@ -2,8 +2,8 @@ import type React from "react";
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/auth";
 import { signOut } from "@/app/(auth)/actions";
+import AdminMenu from "./AdminMenu";
 
-// Narrow type for what we actually read
 type AppUser = {
   email?: string | null;
   name?: string | null;
@@ -17,7 +17,7 @@ function isAdminUser(user: AppUser): boolean {
 }
 
 export default async function Header() {
-  const me = (await getCurrentUser()) as AppUser; // assertion to our safe shape
+  const me = (await getCurrentUser()) as AppUser;
   const isAdmin = isAdminUser(me);
 
   const NavLink = ({
@@ -31,39 +31,35 @@ export default async function Header() {
   }) => (
     <Link
       href={href}
-      className={`no-underline rounded-md px-3 py-2 text-sm font-medium text-foreground/80
-                  hover:text-foreground hover:bg-muted transition-colors duration-200 ${className}`}
+      className={`text-sm hover:text-primary transition-colors no-underline rounded-md px-3 py-2 ${className}`}
     >
       {children}
     </Link>
   );
 
   return (
-    <header
-      className="sticky top-0 z-50 border-b border-border
-             bg-gradient-to-r from-primary via-primary to-[#166FE5]
-             dark:from-primary dark:via-primary dark:to-[#166FE5]
-             backdrop-blur-sm"
-    >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3">
-        <div className="flex items-center justify-between gap-4">
+    <nav className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between">
           {/* Brand */}
-          <Link
-            href="/"
-            className="text-lg font-semibold tracking-tight text-primary-foreground hover:opacity-80 transition-opacity"
-          >
-            Dr Affef Najjari
+          <Link href="/" className="flex items-center gap-2">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold">
+              UT
+            </div>
+            <span className="text-lg font-semibold">
+              University of Tunis El Manar
+            </span>
           </Link>
 
-          {/* Primary nav */}
-          <nav className="hidden sm:flex items-center gap-0.5">
+          {/* Primary nav (desktop) */}
+          <div className="hidden md:flex items-center gap-2">
             <NavLink href="/dashboard">Dashboard</NavLink>
-            <NavLink href="/calendar">Calendar</NavLink>
+            {/*<NavLink href="/calendar">Calendar</NavLink>*/}
             <NavLink href="/about">About</NavLink>
-            {isAdmin && <NavLink href="/admin/users">Admin</NavLink>}
-          </nav>
+            {isAdmin ? <AdminMenu /> : null}
+          </div>
 
-          {/* Auth / user area */}
+          {/* Auth area (always server-rendered) */}
           {!me ? (
             <Link
               href="/signup"
@@ -73,15 +69,11 @@ export default async function Header() {
             </Link>
           ) : (
             <div className="flex items-center gap-3">
-              <span className="hidden sm:inline text-xs sm:text-sm leading-none text-primary-foreground/70 truncate max-w-[12rem]">
+              <span className="hidden sm:inline text-sm leading-none text-foreground/70 truncate max-w-48">
                 {me?.name ?? ""}
               </span>
               <form action={signOut}>
-                <button
-                  className="rounded-md px-3 py-2 text-sm font-medium
-                         bg-muted text-muted-foreground hover:bg-muted/80
-                         transition-colors duration-200"
-                >
+                <button className="rounded-md px-3 py-2 text-sm font-medium bg-muted text-muted-foreground hover:bg-muted/80 transition-colors">
                   Sign Out
                 </button>
               </form>
@@ -89,6 +81,6 @@ export default async function Header() {
           )}
         </div>
       </div>
-    </header>
+    </nav>
   );
 }
