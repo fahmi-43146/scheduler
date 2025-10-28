@@ -1,8 +1,46 @@
-import Link from "next/link";
+"use client";
 
-export const metadata = { title: "Create account" };
+import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function SignUpPage() {
+  const router = useRouter();
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setError(null);
+    setPending(true);
+
+    const form = e.currentTarget;
+    const fd = new FormData(form);
+
+    const name = String(fd.get("name") || "").trim();
+    const email = String(fd.get("email") || "")
+      .trim()
+      .toLowerCase();
+    const password = String(fd.get("password") || "");
+
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }, // your backend expects JSON
+        body: JSON.stringify({ email, password, name }),
+        credentials: "include",
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok)
+        throw new Error(data?.error || `Signup failed (${res.status})`);
+      router.push("/"); // adjust
+    } catch (err: any) {
+      setError(err.message || "Couldn’t sign you up.");
+    } finally {
+      setPending(false);
+    }
+  }
+
   return (
     <div className="min-h-screen bg-white dark:bg-slate-900 grid place-items-center p-4">
       <div className="w-full max-w-sm">
@@ -48,8 +86,8 @@ export default function SignUpPage() {
           </div>
         </div>
 
-        {/* Email signup — posts to your API */}
-        <form method="post" action="/api/auth/signup" className="space-y-3">
+        {/* Email signup — now handled via fetch */}
+        <form onSubmit={onSubmit} className="space-y-3">
           <div className="space-y-1">
             <label
               htmlFor="name"
@@ -100,10 +138,13 @@ export default function SignUpPage() {
 
           <button
             type="submit"
+            disabled={pending}
             className="w-full h-12 rounded-md bg-linear-to-r from-orange-500 to-red-500 text-white font-semibold hover:from-orange-600 hover:to-red-600 transition"
           >
-            Create account
+            {pending ? "Creating…" : "Create account"}
           </button>
+
+          {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
         </form>
 
         <p className="mt-4 text-center text-sm text-slate-600 dark:text-slate-400">

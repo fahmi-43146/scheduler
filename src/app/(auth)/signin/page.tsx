@@ -1,8 +1,47 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export const metadata = { title: "Sign in" };
 
 export default function SignInPage() {
+  const router = useRouter();
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setError(null);
+    setPending(true);
+
+    const fd = new FormData(e.currentTarget);
+    const email = String(fd.get("email") || "")
+      .trim()
+      .toLowerCase();
+    const password = String(fd.get("password") || "");
+
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }, // backend expects JSON
+        body: JSON.stringify({ email, password }),
+        credentials: "include", // httpOnly token cookie set by server
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok)
+        throw new Error(data?.error || `Sign in failed (${res.status})`);
+
+      router.push("/dashboard"); // change to your post-login route
+    } catch (err: any) {
+      setError(err.message || "Couldn’t sign you in.");
+    } finally {
+      setPending(false);
+    }
+  }
+
   return (
     <div className="min-h-screen bg-white dark:bg-slate-900 grid place-items-center p-4">
       <div className="w-full max-w-sm">
@@ -16,7 +55,6 @@ export default function SignInPage() {
           className=" w-full h-12 rounded-md border border-slate-300 dark:border-slate-700 flex items-center justify-center gap-2 text-slate-800 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800 transition mb-5"
           aria-label="Continue with Google"
         >
-          {/* Inline Google icon (no client import) */}
           <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden>
             <path
               fill="#FFC107"
@@ -49,8 +87,8 @@ export default function SignInPage() {
           </div>
         </div>
 
-        {/* Email/password fallback — posts to your API */}
-        <form method="post" action="/api/auth/login" className="space-y-3">
+        {/* Email/password — handled via fetch */}
+        <form onSubmit={onSubmit} className="space-y-3">
           <div className="space-y-1">
             <label
               htmlFor="email"
@@ -85,10 +123,13 @@ export default function SignInPage() {
 
           <button
             type="submit"
+            disabled={pending}
             className="w-full h-12 rounded-md bg-linear-to-r from-orange-500 to-red-500 text-white font-semibold hover:from-orange-600 hover:to-red-600 transition"
           >
-            Sign in
+            {pending ? "Signing in…" : "Sign in"}
           </button>
+
+          {error && <p className="text-sm text-red-600 mt-2">{error}</p>}
         </form>
 
         <p className="mt-4 text-center text-sm text-slate-600 dark:text-slate-400">

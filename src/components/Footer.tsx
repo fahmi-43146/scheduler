@@ -30,7 +30,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-gradient-to-r from-primary via-primary to-[#166FE5] text-primary-foreground">
+    <footer className="bg-to-r from-primary via-primary to-[#166FE5] text-primary-foreground">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 mb-12">
           {/* About Section */}
@@ -85,13 +85,13 @@ export default function Footer() {
             </h3>
             <div className="space-y-3 text-sm">
               <div className="flex gap-3 items-start">
-                <MapPin className="w-5 h-5 flex-shrink-0 mt-0.5 text-primary-foreground" />
+                <MapPin className="w-5 h-5 shrink-0 mt-0.5 text-primary-foreground" />
                 <p className="text-primary-foreground/80">
                   Campus Universitaire El Manar, 2092 El Manar, Tunis
                 </p>
               </div>
               <div className="flex gap-3 items-center">
-                <Phone className="w-5 h-5 flex-shrink-0 text-primary-foreground" />
+                <Phone className="w-5 h-5 shrink-0 text-primary-foreground" />
                 <a
                   href="tel:+21671872600"
                   className="text-primary-foreground/80 hover:text-primary-foreground transition-colors"
@@ -100,7 +100,7 @@ export default function Footer() {
                 </a>
               </div>
               <div className="flex gap-3 items-center">
-                <Mail className="w-5 h-5 flex-shrink-0 text-primary-foreground" />
+                <Mail className="w-5 h-5 shrink-0 text-primary-foreground" />
                 <a
                   href="mailto:info@utm.rnu.tn"
                   className="text-primary-foreground/80 hover:text-primary-foreground transition-colors"
