@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { useAdminEventActions } from "@/hooks/useAdminEventActions";
+import { useRouter } from "next/navigation";
 
 export type AdminEventRow = {
   id: string;
@@ -23,8 +24,15 @@ export default function EventsPageClient({
   events: AdminEventRow[];
   error: string | null;
 }) {
+  const router = useRouter();
   const { cancel, restore, hardDelete, isLoading } = useAdminEventActions();
-
+  const handleAction = async (
+    actionFn: (id: string) => Promise<void>,
+    id: string
+  ) => {
+    await actionFn(id);
+    router.refresh(); // ← Refetch server data
+  };
   useEffect(() => {
     if (error) toast.error("Couldn’t load events", { description: error });
   }, [error]);
@@ -59,7 +67,7 @@ export default function EventsPageClient({
               <td className="p-2 flex gap-2">
                 {e.status === "ACTIVE" ? (
                   <button
-                    onClick={() => cancel(e.id)}
+                    onClick={() => handleAction(cancel, e.id)}
                     disabled={isLoading(e.id)}
                     className="rounded bg-yellow-600 px-2 py-1 text-white disabled:opacity-50"
                   >
@@ -67,7 +75,7 @@ export default function EventsPageClient({
                   </button>
                 ) : (
                   <button
-                    onClick={() => restore(e.id)}
+                    onClick={() => handleAction(restore, e.id)}
                     disabled={isLoading(e.id)}
                     className="rounded bg-blue-600 px-2 py-1 text-white disabled:opacity-50"
                   >
@@ -76,7 +84,7 @@ export default function EventsPageClient({
                 )}
 
                 <button
-                  onClick={() => hardDelete(e.id)}
+                  onClick={() => handleAction(hardDelete, e.id)}
                   disabled={isLoading(e.id)}
                   className="rounded bg-red-600 px-2 py-1 text-white disabled:opacity-50"
                 >
