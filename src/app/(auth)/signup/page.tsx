@@ -30,10 +30,13 @@ export default function SignUpPage() {
         body: JSON.stringify({ email, password, name }),
         credentials: "include",
       });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok)
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
         throw new Error(data?.error || `Signup failed (${res.status})`);
-      router.push("/"); // adjust
+      }
+      // On success, redirect to home page
+      window.location.href = "/";
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);

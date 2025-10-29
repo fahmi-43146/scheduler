@@ -28,11 +28,11 @@ export default function SignInPage() {
         credentials: "include", // httpOnly token cookie set by server
       });
 
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok)
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
         throw new Error(data?.error || `Sign in failed (${res.status})`);
-
-      router.push("/dashboard"); // change to your post-login route
+      }
+      window.location.href = "/";
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
