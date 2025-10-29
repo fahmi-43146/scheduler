@@ -15,7 +15,7 @@ type EventItem = {
   start: Date;
   end: Date;
   color?: string;
-  status?: "ACTIVE" | "CANCELLED"; // optional but recommended
+  status?: "ACTIVE" | "CANCELLED";
 };
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -63,11 +63,8 @@ export default function Scheduler({
   updateEvents?: (fn: (draft: EventItem[]) => void) => void;
   hourHeight?: number;
 }) {
-  // wire updater into the shared hook
   const { cancel, restore, hardDelete, isLoading } =
-    useAdminEventActions<EventItem>({
-      updateEvents,
-    });
+    useAdminEventActions<EventItem>({ updateEvents });
   const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
 
   const roomName = selectedRoomName || "Mathematics";
@@ -86,6 +83,7 @@ export default function Scheduler({
   );
   const weekStartKey = useMemo(() => weekStart.getTime(), [weekStart]);
   const lastRangeKeyRef = useRef<string>("");
+
   useEffect(() => {
     if (!onWeekChange) return;
     const key = `${weekStart.toISOString()}|${weekEnd.toISOString()}`;
@@ -124,34 +122,34 @@ export default function Scheduler({
   return (
     <div className="rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden bg-white dark:bg-slate-950">
       {/* Header */}
-      <div className="flex items-center justify-between bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-700 px-4 py-3">
-        <div className="font-semibold text-orange-600 dark:text-orange-400 text-sm">
+      <div className="flex flex-col sm:flex-row items-center justify-between bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-700 px-4 py-3 gap-3">
+        <div className="font-semibold text-orange-600 dark:text-orange-400 text-sm sm:text-base">
           {roomName}
         </div>
-        <DatePicker onSelect={(d: Date) => setSelectedDate(d)} />
-        <div className="flex flex-col items-center gap-2">
-          <div className="text-sm text-slate-600 dark:text-slate-400">
-            Week of{" "}
-            {weekStart.toLocaleDateString(undefined, {
-              month: "short",
-              day: "2-digit",
-              year: "numeric",
-            })}
-          </div>
+        <div className="flex items-center gap-2">
+          <DatePicker onSelect={(d: Date) => setSelectedDate(d)} />
           <div className="flex items-center gap-1">
             <button
               onClick={() => setSelectedDate((d) => addDays(d, -7))}
               className="rounded p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             >
-              <ChevronLeftIcon className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+              <ChevronLeftIcon className="w-5 h-5 text-slate-600 dark:text-slate-400" />
             </button>
             <button
               onClick={() => setSelectedDate((d) => addDays(d, 7))}
               className="rounded p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             >
-              <ChevronRightIcon className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+              <ChevronRightIcon className="w-5 h-5 text-slate-600 dark:text-slate-400" />
             </button>
           </div>
+        </div>
+        <div className="text-sm text-slate-600 dark:text-slate-400 text-center sm:text-right">
+          Week of{" "}
+          {weekStart.toLocaleDateString(undefined, {
+            month: "short",
+            day: "2-digit",
+            year: "numeric",
+          })}
         </div>
       </div>
 
@@ -198,7 +196,6 @@ export default function Scheduler({
               );
             })}
 
-            {/* Centered hour labels */}
             {Array.from(
               { length: endHour - startHour },
               (_, i) => startHour + i
@@ -210,11 +207,7 @@ export default function Scheduler({
                   className="absolute left-0 right-0"
                   style={{ top: centerY }}
                 >
-                  <div
-                    className="ml-2 inline-flex items-center rounded bg-white dark:bg-slate-800
-                     px-2 py-0.5 text-xs font-semibold text-slate-700 dark:text-slate-200
-                     -translate-y-1/2"
-                  >
+                  <div className="ml-2 inline-flex items-center rounded bg-white dark:bg-slate-800 px-2 py-0.5 text-xs font-semibold text-slate-700 dark:text-slate-200 -translate-y-1/2">
                     {String(h).padStart(2, "0")}:00
                   </div>
                 </div>
@@ -242,21 +235,17 @@ export default function Scheduler({
                     )}`;
                     onSlotClick?.(iso, startHour + i);
                   }}
-                  className={`absolute left-0 right-0 cursor-pointer transition-colors border-t 
-                              border-slate-200 dark:border-slate-800 hover:border-orange-400 
-                              hover:bg-orange-50 dark:hover:bg-orange-950/30 ${
-                                (eventsByDay.get(dayIdx) || []).some((ev) => {
-                                  const hourStart = new Date(d);
-                                  hourStart.setHours(startHour + i, 0, 0, 0);
-                                  const hourEnd = new Date(hourStart);
-                                  hourEnd.setMinutes(hourEnd.getMinutes() + 60);
-                                  return (
-                                    ev.start < hourEnd && ev.end > hourStart
-                                  );
-                                })
-                                  ? "bg-orange-50/50 dark:bg-orange-950/15"
-                                  : ""
-                              }`}
+                  className={`absolute left-0 right-0 cursor-pointer transition-colors border-t border-slate-200 dark:border-slate-800 hover:border-orange-400 hover:bg-orange-orange-50 dark:hover:bg-orange-950/30 ${
+                    (eventsByDay.get(dayIdx) || []).some((ev) => {
+                      const hourStart = new Date(d);
+                      hourStart.setHours(startHour + i, 0, 0, 0);
+                      const hourEnd = new Date(hourStart);
+                      hourEnd.setMinutes(hourEnd.getMinutes() + 60);
+                      return ev.start < hourEnd && ev.end > hourStart;
+                    })
+                      ? "bg-orange-50/50 dark:bg-orange-950/15"
+                      : ""
+                  }`}
                   style={{
                     top: i * 60 * pxPerMinute,
                     height: 60 * pxPerMinute,
@@ -279,7 +268,7 @@ export default function Scheduler({
                   const endY = minsSince(ev.end, startHour) * pxPerMinute;
                   const top = clampY(startY);
                   const bottom = clampY(endY);
-                  const height = Math.max(16, bottom - top);
+                  const height = Math.max(48, bottom - top); // ← UNCRUSHABLE
                   if (bottom <= top) return null;
 
                   const isCancelled = (ev.status ?? "ACTIVE") === "CANCELLED";
@@ -287,13 +276,13 @@ export default function Scheduler({
                   return (
                     <div
                       key={ev.id}
-                      className={`absolute left-1 right-1 rounded-md border border-opacity-20 text-xs leading-snug text-white p-1.5 pointer-events-auto shadow-md hover:shadow-lg transition-shadow ${
+                      className={`absolute left-1 right-1 rounded-lg border border-opacity-30 text-white p-2 pointer-events-auto shadow-md hover:shadow-lg transition-shadow ${
                         ev.color || "bg-orange-600"
                       } ${
                         isCancelled
                           ? "opacity-70 grayscale"
                           : "hover:brightness-110"
-                      }`}
+                      } md:p-1.5 md:text-xs`}
                       style={{ top, height }}
                       title={`${ev.title} — ${pad2(ev.start.getHours())}:${pad2(
                         ev.start.getMinutes()
@@ -302,18 +291,18 @@ export default function Scheduler({
                       )}`}
                     >
                       <div className="flex items-start justify-between gap-1">
-                        <div className="min-w-0">
-                          <div className="font-semibold truncate text-xs">
+                        <div className="min-w-0 flex-1">
+                          <div className="font-semibold truncate text-sm md:text-xs">
                             {ev.title}
                           </div>
-                          <div className="opacity-90 truncate text-[11px]">
+                          <div className="opacity-90 truncate text-xs md:text-[11px] mt-0.5">
                             {pad2(ev.start.getHours())}:
                             {pad2(ev.start.getMinutes())} –{" "}
                             {pad2(ev.end.getHours())}:
                             {pad2(ev.end.getMinutes())}
                           </div>
                           {isCancelled && (
-                            <span className="mt-0.5 inline-block rounded bg-black/20 px-1 py-px text-[10px] uppercase">
+                            <span className="mt-1 inline-block rounded bg-black/30 px-1.5 py-0.5 text-[10px] uppercase">
                               Cancelled
                             </span>
                           )}
@@ -321,7 +310,7 @@ export default function Scheduler({
 
                         {/* Admin actions */}
                         {isAdmin && (
-                          <div className="relative">
+                          <div className="relative flex-shrink-0">
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -329,15 +318,15 @@ export default function Scheduler({
                                   menuOpenId === ev.id ? null : ev.id
                                 );
                               }}
-                              className="pointer-events-auto rounded p-1 hover:bg-black/10"
+                              className="pointer-events-auto rounded p-1.5 hover:bg-black/20 transition-colors"
                               aria-label="Event actions"
                             >
-                              <MoreHorizontal className="w-4 h-4" />
+                              <MoreHorizontal className="w-5 h-5 md:w-4 md:h-4" />
                             </button>
 
                             {menuOpenId === ev.id && (
                               <div
-                                className="absolute right-0 z-10 mt-1 w-36 rounded-md border bg-white p-1 text-xs text-black shadow-lg"
+                                className="absolute right-0 z-50 mt-1 w-36 rounded-lg border border-border bg-white dark:bg-slate-900 p-2 text-xs text-foreground shadow-2xl"
                                 onClick={(e) => e.stopPropagation()}
                               >
                                 {isCancelled ? (
@@ -347,7 +336,7 @@ export default function Scheduler({
                                       setMenuOpenId(null);
                                     }}
                                     disabled={isLoading(ev.id)}
-                                    className="block w-full rounded px-2 py-1 text-left hover:bg-gray-100 disabled:opacity-50"
+                                    className="block w-full rounded px-3 py-1.5 text-left hover:bg-muted/50 disabled:opacity-50 transition-colors"
                                   >
                                     {isLoading(ev.id)
                                       ? "Restoring…"
@@ -360,7 +349,7 @@ export default function Scheduler({
                                       setMenuOpenId(null);
                                     }}
                                     disabled={isLoading(ev.id)}
-                                    className="block w-full rounded px-2 py-1 text-left hover:bg-gray-100 disabled:opacity-50"
+                                    className="block w-full rounded px-3 py-1.5 text-left hover:bg-muted/50 disabled:opacity-50 transition-colors"
                                   >
                                     {isLoading(ev.id)
                                       ? "Cancelling…"
@@ -380,7 +369,7 @@ export default function Scheduler({
                                     }
                                   }}
                                   disabled={isLoading(ev.id)}
-                                  className="mt-1 block w-full rounded px-2 py-1 text-left text-red-600 hover:bg-red-100 disabled:opacity-50"
+                                  className="mt-1 block w-full rounded px-3 py-1.5 text-left text-red-600 hover:bg-red-100 dark:hover:bg-red-900/50 disabled:opacity-50 transition-colors"
                                 >
                                   {isLoading(ev.id) ? "Deleting…" : "Delete"}
                                 </button>
