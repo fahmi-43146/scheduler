@@ -17,8 +17,8 @@ type EventWhere = NonNullable<EventFindManyArgs>["where"];
 type EventOrderBy = NonNullable<EventFindManyArgs>["orderBy"];
 
 export async function GET(req: NextRequest) {
-  const user = await getCurrentUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  // const user = await getCurrentUser();
+  // if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const sp = new URL(req.url).searchParams;
   const input = listSchema.parse({
