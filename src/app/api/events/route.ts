@@ -6,7 +6,7 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache"; // ← ADD
 
 const listSchema = z.object({
-  roomId: z.string().cuid().optional(),
+  roomId: z.string().min(1).optional(),
   roomName: z.string().min(1).optional(),
   from: z.string().datetime().optional(),
   to: z.string().datetime().optional(),
