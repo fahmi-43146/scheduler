@@ -1,9 +1,8 @@
-//src\app\calendar\ClendarClient.tsx
+// src/app/calendar/ClendarClient.tsx
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-// (Rooms import not needed for logic anymore, but leaving your other logic intact)
-//import Rooms from "@/components/Rooms";
+import RoomsBar from "@/components/RoomsBar"; // ADDED: Required for mobile swipe
 import Scheduler from "@/components/Scheduler";
 import EventForm, { NewEvent } from "@/components/EventForm";
 import { Button } from "@/components/ui/button";
@@ -14,7 +13,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { useWeekEvents } from "@/hooks/useWeekEvents";
 
@@ -140,71 +138,36 @@ export default function CalendarClient() {
     );
   }
 
-  /* ===== CSS-only fixes below =====
-     - Remove the 4-column grid (no sidebar),
-     - Make the scheduler card full-width,
-     - Tighten spacing, unify radius/border/shadow,
-     - Add a gentle page-height for nicer feel. */
   return (
-    <div className="space-y-4">
-      {/* Toolbar */}
+    <div className="min-h-screen bg-muted/20 pb-[max(5rem,env(safe-area-inset-bottom,1rem)+1rem)] px-safe space-y-4">
+      {/* Toolbar with Swipeable RoomsBar */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-2">
-          <label
-            htmlFor="room"
-            className="text-sm text-slate-600 dark:text-slate-300"
-          >
-            Room
-          </label>
-          <select
-            id="room"
-            className="rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-gray-900 px-2 py-1.5 text-sm
-                       text-slate-700 dark:text-slate-200 focus-visible:ring-2 focus-visible:ring-orange-400 outline-none"
-            value={selectedRoomId || ""}
-            onChange={(e) => setSelectedRoomId(e.target.value)}
-          >
-            {rooms.map((r) => (
-              <option key={r.id} value={r.id}>
-                {r.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
+        <RoomsBar
+          rooms={rooms.map((r) => ({ name: r.name, icon: r.icon ?? null }))}
+          selectedRoomName={selectedRoomName}
+          onSelect={(name) => {
+            const room = rooms.find((r) => r.name === name);
+            setSelectedRoomId(room?.id);
+          }}
+          trailing={
             <Button
-              className="bg-orange-600 hover:bg-orange-700 text-white focus-visible:ring-2 focus-visible:ring-orange-400"
+              size="sm"
+              className="h-11 px-4 text-sm bg-orange-600 hover:bg-orange-700 text-white"
               disabled={!selectedRoomId}
+              onClick={() => setIsDialogOpen(true)}
             >
               Add event
             </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[420px]">
-            <DialogHeader>
-              <DialogTitle>Add New Event</DialogTitle>
-              <DialogDescription>
-                Create a new event for {selectedRoomName || "the selected room"}
-                .
-              </DialogDescription>
-            </DialogHeader>
-            <EventForm
-              onSubmit={handleCreateEvent}
-              onCancel={() => {}}
-              defaultDate={formDefaults.date}
-              defaultStart={formDefaults.start}
-              defaultEnd={formDefaults.end}
-            />
-          </DialogContent>
-        </Dialog>
+          }
+        />
       </div>
 
       {/* Status Line */}
       {error && <div className="text-sm text-red-600">{error}</div>}
       {loading && <div className="text-sm text-slate-500">Loading events…</div>}
 
-      {/* Scheduler Card (full width) */}
-      <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-gray-900 p-4 md:p-6 shadow-sm min-h-[60vh]">
+      {/* Scheduler Card (full height on mobile) */}
+      <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-gray-900 p-4 md:p-6 shadow-sm min-h-[calc(100dvh-160px)]">
         <Scheduler
           selectedRoomName={selectedRoomName}
           events={events}
@@ -217,6 +180,25 @@ export default function CalendarClient() {
           onWeekChange={handleWeekChange}
         />
       </section>
+
+      {/* Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-full mx-4 sm:max-w-[420px] p-6">
+          <DialogHeader>
+            <DialogTitle>Add New Event</DialogTitle>
+            <DialogDescription>
+              Create a new event for {selectedRoomName || "the selected room"}.
+            </DialogDescription>
+          </DialogHeader>
+          <EventForm
+            onSubmit={handleCreateEvent}
+            onCancel={() => setIsDialogOpen(false)}
+            defaultDate={formDefaults.date}
+            defaultStart={formDefaults.start}
+            defaultEnd={formDefaults.end}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

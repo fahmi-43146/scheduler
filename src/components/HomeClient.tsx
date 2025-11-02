@@ -97,7 +97,7 @@ export default function HomeClient({ isAdmin = false }: { isAdmin?: boolean }) {
       if (res.status === 401) {
         toast("You must sign in to create events", {
           description: "Please sign in and try again.",
-          duration: 6000,
+          duration: 4000,
           action: {
             label: "Sign in",
             onClick: () => (window.location.href = "/signin"),
@@ -106,7 +106,7 @@ export default function HomeClient({ isAdmin = false }: { isAdmin?: boolean }) {
       } else {
         toast("Failed to create event", {
           description: errorText,
-          duration: 6000,
+          duration: 4000,
         });
       }
       return;
@@ -147,32 +147,35 @@ export default function HomeClient({ isAdmin = false }: { isAdmin?: boolean }) {
   }
 
   return (
-    <div className="min-h-screen bg-muted/20 dark:bg-background">
+    <div className="min-h-screen bg-muted/20 dark:bg-background pb-[max(5rem,env(safe-area-inset-bottom,1rem)+1rem)] md:pb-0">
       <div className="mx-auto max-w-6xl px-3 sm:px-4 py-3 md:py-4 flex flex-col gap-3">
         {/* Sticky, blurred, auto-elevating Rooms bar with tiny desktop button */}
-        <RoomsBar
-          rooms={rooms.map((r) => ({ name: r.name, icon: r.icon ?? null }))}
-          selectedRoomName={selectedRoomName}
-          onSelect={(name) => {
-            const r = rooms.find((x) => x.name === name);
-            setSelectedRoomId(r?.id);
-          }}
-          sticky
-          trailing={
-            <div className="hidden md:block">
-              <Button
-                size="icon"
-                className="h-9 w-9 rounded-full bg-orange-600 hover:bg-orange-700 text-white shadow-md shadow-orange-600/20"
-                onClick={() => setIsDialogOpen(true)}
-                disabled={!selectedRoomId}
-                aria-label="Add event"
-                title="Add event"
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
-          }
-        />
+        {/* Sticky, blurred, auto-elevating Rooms bar with tiny desktop button */}
+        <div className="w-full px-safe md:px-0">
+          <RoomsBar
+            rooms={rooms.map((r) => ({ name: r.name, icon: r.icon ?? null }))}
+            selectedRoomName={selectedRoomName}
+            onSelect={(name) => {
+              const r = rooms.find((x) => x.name === name);
+              setSelectedRoomId(r?.id);
+            }}
+            sticky
+            trailing={
+              <div className="hidden md:block">
+                <Button
+                  size="icon"
+                  className="h-9 w-9 rounded-full bg-orange-600 hover:bg-orange-700 text-white shadow-md shadow-orange-600/20"
+                  onClick={() => setIsDialogOpen(true)}
+                  disabled={!selectedRoomId}
+                  aria-label="Add event"
+                  title="Add event"
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+            }
+          />
+        </div>
 
         {/* Status line */}
         {error && (
@@ -185,7 +188,7 @@ export default function HomeClient({ isAdmin = false }: { isAdmin?: boolean }) {
         )}
 
         {/* Scheduler area (give it lots of height) */}
-        <div className="flex-1 h-[calc(100vh-150px)] md:h-[calc(100vh-190px)]">
+        <div className="flex-1 min-h-0 h-[calc(100dvh-140px)] md:h-[calc(100vh-160px)]">
           <Scheduler
             selectedRoomName={selectedRoomName}
             events={events}

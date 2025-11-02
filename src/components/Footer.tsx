@@ -31,19 +31,19 @@ export default function Footer() {
 
   return (
     <footer className="bg-to-r from-primary via-primary to-[#166FE5] text-primary-foreground">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 mb-12">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 lg:py-12 pb-safe">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10 mb-10">
           {/* About Section */}
-          <div className="space-y-4">
+          <div className="space-y-3 text-center md:text-left">
             <h3 className="text-lg font-semibold text-primary-foreground">
               University of Tunis El Manar
             </h3>
-            <p className="text-primary-foreground/80 text-sm leading-relaxed">
+            <p className="text-primary-foreground/80 text-xs sm:text-sm leading-relaxed text-balance">
               A leading multidisciplinary institution dedicated to excellence in
               education, research, and innovation across sciences, engineering,
               and medicine.
             </p>
-            <div className="flex gap-3 pt-2">
+            <div className="flex gap-3 pt-1 justify-center md:justify-start">
               {socialLinks.map(({ Icon, label, href }) => (
                 <a
                   key={label}
@@ -51,7 +51,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noreferrer"
                   aria-label={label}
-                  className="w-10 h-10 rounded-full bg-primary-foreground/10 hover:bg-primary-foreground/20 flex items-center justify-center transition-all duration-300 hover:scale-110"
+                  className="w-11 h-11 rounded-full bg-primary-foreground/10 hover:bg-primary-foreground/20 flex items-center justify-center transition-all duration-300 hover:scale-110 focus-visible:ring-2 focus-visible:ring-primary-foreground/50"
                 >
                   <Icon className="w-5 h-5 text-primary-foreground" />
                 </a>
@@ -60,16 +60,16 @@ export default function Footer() {
           </div>
 
           {/* Quick Links */}
-          <div className="space-y-4">
+          <div className="space-y-3 text-center md:text-left">
             <h3 className="text-lg font-semibold text-primary-foreground">
               Quick Links
             </h3>
-            <ul className="space-y-2">
+            <ul className="space-y-1.5 inline-block text-left">
               {quickLinks.map(({ label, href }) => (
                 <li key={label}>
                   <a
                     href={href}
-                    className="text-primary-foreground/80 hover:text-primary-foreground transition-colors duration-300 text-sm"
+                    className="text-primary-foreground/80 hover:text-primary-foreground transition-colors duration-300 text-xs sm:text-sm"
                   >
                     {label}
                   </a>
@@ -79,19 +79,19 @@ export default function Footer() {
           </div>
 
           {/* Contact Info */}
-          <div className="space-y-4">
+          <div className="space-y-3 text-center md:text-left">
             <h3 className="text-lg font-semibold text-primary-foreground">
               Contact
             </h3>
-            <div className="space-y-3 text-sm">
-              <div className="flex gap-3 items-start">
-                <MapPin className="w-5 h-5 shrink-0 mt-0.5 text-primary-foreground" />
-                <p className="text-primary-foreground/80">
+            <div className="space-y-2 text-xs sm:text-sm inline-block text-left">
+              <div className="flex gap-2 items-start justify-center md:justify-start">
+                <MapPin className="w-4 h-4 shrink-0 mt-0.5 text-primary-foreground" />
+                <p className="text-primary-foreground/80 text-balance">
                   Campus Universitaire El Manar, 2092 El Manar, Tunis
                 </p>
               </div>
-              <div className="flex gap-3 items-center">
-                <Phone className="w-5 h-5 shrink-0 text-primary-foreground" />
+              <div className="flex gap-2 items-center justify-center md:justify-start">
+                <Phone className="w-4 h-4 shrink-0 text-primary-foreground" />
                 <a
                   href="tel:+21671872600"
                   className="text-primary-foreground/80 hover:text-primary-foreground transition-colors"
@@ -99,11 +99,11 @@ export default function Footer() {
                   +216 71 872 600
                 </a>
               </div>
-              <div className="flex gap-3 items-center">
-                <Mail className="w-5 h-5 shrink-0 text-primary-foreground" />
+              <div className="flex gap-2 items-center justify-center md:justify-start">
+                <Mail className="w-4 h-4 shrink-0 text-primary-foreground" />
                 <a
                   href="mailto:info@utm.rnu.tn"
-                  className="text-primary-foreground/80 hover:text-primary-foreground transition-colors"
+                  className="text-primary-foreground/80 hover:text-primary-foreground transition-colors break-all"
                 >
                   info@utm.rnu.tn
                 </a>
@@ -113,11 +113,11 @@ export default function Footer() {
         </div>
 
         {/* Map Section */}
-        <div className="mb-8">
-          <h3 className="text-lg font-semibold text-primary-foreground mb-4">
+        <div className="mb-8 text-center md:text-left">
+          <h3 className="text-lg font-semibold text-primary-foreground mb-3">
             Our Location
           </h3>
-          <div className="rounded-xl overflow-hidden border border-border/20 shadow-lg h-64 md:h-80">
+          <div className="rounded-xl overflow-hidden border border-border/20 shadow-lg h-48 md:h-80 mx-auto md:mx-0 max-w-md">
             <iframe
               title="University Location Map"
               className="w-full h-full"
@@ -133,11 +133,11 @@ export default function Footer() {
         <div className="border-t border-border/20"></div>
 
         {/* Bottom Section */}
-        <div className="pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-primary-foreground/80">
+        <div className="pt-6 flex flex-col sm:flex-row justify-center md:justify-between items-center gap-3 text-xs sm:text-sm text-primary-foreground/80">
           <p>
             © {currentYear} University of Tunis El Manar. All rights reserved.
           </p>
-          <div className="flex gap-6">
+          <div className="flex gap-4 sm:gap-6">
             <a
               href="#"
               className="hover:text-primary-foreground transition-colors"

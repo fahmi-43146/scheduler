@@ -9,11 +9,8 @@ export type RoomsBarProps = {
   rooms: RoomItem[];
   selectedRoomName?: string;
   onSelect: (name: string) => void;
-  /** Make the bar sticky with blur & auto shadow on scroll (default: true) */
   sticky?: boolean;
-  /** Extra class for the outer container */
   className?: string;
-  /** Optional: trailing action (e.g. tiny Add button) */
   trailing?: React.ReactNode;
 };
 
@@ -58,8 +55,8 @@ export default function RoomsBar({
       className={cx(
         "w-full",
         sticky &&
-          "sticky top-0 z-30 -mx-1 md:mx-0 px-2 py-2 border-b border-slate-200/70 dark:border-slate-800/60 " +
-            "bg-white/85 dark:bg-gray-900/80 backdrop-blur supports-backdrop-filter:bg-white/60 supports-backdrop-filter:dark:bg-gray-900/60",
+          "sticky top-0 z-30 px-2 py-2 border-b border-slate-200/70 dark:border-slate-800/60 " +
+            "bg-white dark:bg-slate-950 backdrop-blur-sm supports-backdrop-filter:bg-white/90 supports-backdrop-filter:dark:bg-slate-950/90",
         elevated && sticky && "shadow-sm",
         "transition-shadow duration-300",
         className
@@ -67,16 +64,16 @@ export default function RoomsBar({
       style={{ paddingTop: "max(env(safe-area-inset-top), 0px)" }}
     >
       <div className="flex items-center gap-2">
+        {/* SCROLL CONTAINER */}
         <div
           className="
-            flex-1 min-w-0 w-full max-w-full
-            overflow-x-auto whitespace-nowrap scrollbar-hide touch-pan-x
-            snap-x snap-mandatory
-          "
+    flex-1 overflow-x-auto scrollbar-hide [-webkit-overflow-scrolling:touch]
+    snap-x snap-mandatory min-w-0
+  "
           role="tablist"
           aria-label="Rooms"
         >
-          <div className="inline-flex min-w-max gap-2 px-1 py-1">
+          <div className="flex gap-2 px-1 py-1 min-w-fit whitespace-nowrap">
             {rooms.map((r) => {
               const active = r.name === selectedRoomName;
               return (
@@ -88,18 +85,18 @@ export default function RoomsBar({
                   data-room={r.name}
                   onClick={() => onSelect(r.name)}
                   className={cx(
-                    "shrink-0 snap-start rounded-full px-3 py-1.5 text-sm border transition-colors",
-                    "focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-300",
+                    "shrink-0 snap-start rounded-full px-4 py-2 text-sm font-medium border transition-all duration-200",
+                    "focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400",
                     active
-                      ? "bg-orange-600 text-white border-orange-600"
-                      : "bg-white dark:bg-gray-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800"
+                      ? "bg-orange-600 text-white border-orange-600 shadow-sm"
+                      : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600"
                   )}
                   title={r.name}
                 >
                   {typeof r.icon === "string" ? (
-                    <span className="mr-1">{r.icon}</span>
+                    <span className="mr-1.5">{r.icon}</span>
                   ) : r.icon ? (
-                    <span className="mr-1 inline-flex items-center">
+                    <span className="mr-1.5 inline-flex items-center">
                       {r.icon}
                     </span>
                   ) : null}
@@ -110,7 +107,7 @@ export default function RoomsBar({
           </div>
         </div>
 
-        {trailing ? <div className="shrink-0">{trailing}</div> : null}
+        {trailing ? <div className="shrink-0 pl-2">{trailing}</div> : null}
       </div>
     </div>
   );
