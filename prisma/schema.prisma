@@ -26,6 +26,12 @@ enum EventStatus {
   CANCELLED
 }
 
+enum EventType {
+  PHD
+  THESIS
+  OTHER
+}
+
 /**
  * ===== Models =====
  */
@@ -88,15 +94,17 @@ model Room {
 }
 
 model Event {
-  id          String      @id @default(cuid())
-  title       String
-  description String?
-  status      EventStatus @default(ACTIVE)
-  color       String?     @default("#EA580C")
-  startTime   DateTime    @db.Timestamptz
-  endTime     DateTime    @db.Timestamptz
-  createdAt   DateTime    @default(now()) @db.Timestamptz
-  updatedAt   DateTime    @updatedAt @db.Timestamptz
+  id            String      @id @default(cuid())
+  title         String
+  description   String?
+  status        EventStatus @default(ACTIVE)
+  color         String?     @default("#EA580C")
+  type          EventType   @default(PHD)
+  typeOtherName String?
+  startTime     DateTime    @db.Timestamptz
+  endTime       DateTime    @db.Timestamptz
+  createdAt     DateTime    @default(now()) @db.Timestamptz
+  updatedAt     DateTime    @updatedAt @db.Timestamptz
 
   // Relations
   roomId String
