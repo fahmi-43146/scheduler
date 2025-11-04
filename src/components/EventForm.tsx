@@ -23,7 +23,7 @@ const COLORS = [
 ];
 
 const EVENT_TYPES = [
-  { value: "PHD", label: "PhD" },
+  { value: "PHD", label: "Mastère" },
   { value: "THESIS", label: "Thèse" },
   { value: "OTHER", label: "Autre" },
 ] as const;
