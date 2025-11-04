@@ -3,42 +3,6 @@ import { ArrowRight, BookOpen, Users, Award, Microscope } from "lucide-react";
 export default function AboutPage() {
   return (
     <main className="min-h-screen bg-background">
-      {/* Navigation 
-      <nav className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold">
-                UT
-              </div>
-              <span className="text-lg font-semibold">
-                Université de Tunis El Manar
-              </span>
-            </div>
-            <div className="hidden md:flex gap-8">
-              <a
-                href="#about"
-                className="text-sm hover:text-primary transition-colors"
-              >
-                À propos
-              </a>
-              <a
-                href="#programs"
-                className="text-sm hover:text-primary transition-colors"
-              >
-                Formations
-              </a>
-              <a
-                href="#achievements"
-                className="text-sm hover:text-primary transition-colors"
-              >
-                Réalisations
-              </a>
-            </div>
-          </div>
-        </div>
-      </nav>*/}
-
       {/* Hero Section */}
       <section className="relative overflow-hidden border-b border-border">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 md:py-32">
@@ -51,9 +15,10 @@ export default function AboutPage() {
                 Faculté des Sciences
               </h1>
               <p className="text-lg text-muted-foreground max-w-lg">
-                À l'avant-garde de la connaissance scientifique et de
-                l'innovation en Afrique du Nord, grâce à l'excellence en
-                recherche, en enseignement et en engagement communautaire.
+                À l&rsquo;avant-garde de la connaissance scientifique et de
+                l&rsquo;innovation en Afrique du Nord, grâce à
+                l&rsquo;excellence en recherche, en enseignement et en
+                engagement communautaire.
               </p>
               <div className="flex gap-4 pt-4">
                 <button className="px-6 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center gap-2">
@@ -94,7 +59,8 @@ export default function AboutPage() {
                   Fondée en 2000, l’Université de Tunis El Manar est une
                   institution multidisciplinaire de premier plan dédiée à
                   l’avancement des connaissances scientifiques et au
-                  développement de l’innovation à travers l’Afющейся du Nord.
+                  développement de l&rsquo;innovation à travers l&rsquo;Afrique
+                  du Nord.
                 </p>
                 <p>
                   Notre Faculté des Sciences est reconnue internationalement
@@ -260,136 +226,6 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-
-      {/* Footer 
-      <footer className="border-t border-border bg-secondary/50 py-12">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <h4 className="font-semibold mb-4">Université</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <a
-                    href="#"
-                    className="hover:text-foreground transition-colors"
-                  >
-                    À propos
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="hover:text-foreground transition-colors"
-                  >
-                    Admissions
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="hover:text-foreground transition-colors"
-                  >
-                    Formations
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Recherche</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <a
-                    href="#"
-                    className="hover:text-foreground transition-colors"
-                  >
-                    Centres de recherche
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="hover:text-foreground transition-colors"
-                  >
-                    Publications
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="hover:text-foreground transition-colors"
-                  >
-                    Collaborations
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Communauté</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <a
-                    href="#"
-                    className="hover:text-foreground transition-colors"
-                  >
-                    Événements
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="hover:text-foreground transition-colors"
-                  >
-                    Actualités
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="hover:text-foreground transition-colors"
-                  >
-                    Anciens
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Contact</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>Tunis, Tunisie</li>
-                <li>
-                  <a
-                    href="mailto:info@utm.tn"
-                    className="hover:text-foreground transition-colors"
-                  >
-                    info@utm.tn
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="tel:+216"
-                    className="hover:text-foreground transition-colors"
-                  >
-                    +216 (0) XX XXX XXX
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-muted-foreground">
-            <p>
-              &copy; 2025 Université de Tunis El Manar. Tous droits réservés.
-            </p>
-            <div className="flex gap-6 mt-4 md:mt-0">
-              <a href="#" className="hover:text-foreground transition-colors">
-                Politique de confidentialité
-              </a>
-              <a href="#" className="hover:text-foreground transition-colors">
-                Conditions d'utilisation
-              </a>
-            </div>
-          </div>
-        </div>
-      </footer>*/}
     </main>
   );
 }
