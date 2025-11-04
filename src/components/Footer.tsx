@@ -23,8 +23,8 @@ export default function Footer() {
   ];
 
   const quickLinks = [
-    { label: "About", href: "/about" },
-    { label: "Programs", href: "/programs" },
+    { label: "À propos", href: "/about" },
+    { label: "Formations", href: "/programs" },
     { label: "Admissions", href: "/admissions" },
     { label: "Contact", href: "/contact" },
   ];
@@ -36,12 +36,12 @@ export default function Footer() {
           {/* About Section */}
           <div className="space-y-3 text-center md:text-left">
             <h3 className="text-lg font-semibold text-primary-foreground">
-              University of Tunis El Manar
+              Université de Tunis El Manar
             </h3>
             <p className="text-primary-foreground/80 text-xs sm:text-sm leading-relaxed text-balance">
-              A leading multidisciplinary institution dedicated to excellence in
-              education, research, and innovation across sciences, engineering,
-              and medicine.
+              Une institution multidisciplinaire de premier plan dédiée à
+              l'excellence en enseignement, recherche et innovation dans les
+              sciences, l'ingénierie et la médecine.
             </p>
             <div className="flex gap-3 pt-1 justify-center md:justify-start">
               {socialLinks.map(({ Icon, label, href }) => (
@@ -62,7 +62,7 @@ export default function Footer() {
           {/* Quick Links */}
           <div className="space-y-3 text-center md:text-left">
             <h3 className="text-lg font-semibold text-primary-foreground">
-              Quick Links
+              Liens rapides
             </h3>
             <ul className="space-y-1.5 inline-block text-left">
               {quickLinks.map(({ label, href }) => (
@@ -115,11 +115,11 @@ export default function Footer() {
         {/* Map Section */}
         <div className="mb-8 text-center md:text-left">
           <h3 className="text-lg font-semibold text-primary-foreground mb-3">
-            Our Location
+            Notre localisation
           </h3>
           <div className="rounded-xl overflow-hidden border border-border/20 shadow-lg h-48 md:h-80 mx-auto md:mx-0 max-w-md">
             <iframe
-              title="University Location Map"
+              title="Carte de localisation de l’université"
               className="w-full h-full"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
@@ -135,20 +135,20 @@ export default function Footer() {
         {/* Bottom Section */}
         <div className="pt-6 flex flex-col sm:flex-row justify-center md:justify-between items-center gap-3 text-xs sm:text-sm text-primary-foreground/80">
           <p>
-            © {currentYear} University of Tunis El Manar. All rights reserved.
+            © {currentYear} Université de Tunis El Manar. Tous droits réservés.
           </p>
           <div className="flex gap-4 sm:gap-6">
             <a
               href="#"
               className="hover:text-primary-foreground transition-colors"
             >
-              Privacy Policy
+              Politique de confidentialité
             </a>
             <a
               href="#"
               className="hover:text-primary-foreground transition-colors"
             >
-              Terms of Service
+              Conditions d'utilisation
             </a>
           </div>
         </div>
