@@ -15,7 +15,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useWeekEvents } from "@/hooks/useWeekEvents";
-
 type RoomDto = { id: string; name: string; icon?: string | null };
 
 // tiny helper
@@ -79,17 +78,22 @@ export default function CalendarClient() {
   async function handleCreateEvent(e: NewEvent) {
     if (!selectedRoomId) return;
 
+    // SINGLE SOURCE OF TRUTH
+    const payload = {
+      roomId: selectedRoomId,
+      title: e.title,
+      description: undefined,
+      color: e.color,
+      startTime: `${e.date}T${e.start}:00.000Z`,
+      endTime: `${e.date}T${e.end}:00.000Z`,
+      type: e.type,
+      typeOtherName: e.type === "OTHER" ? e.typeOtherName : null,
+    };
+
     const res = await fetch("/api/events", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        roomId: selectedRoomId,
-        title: e.title,
-        description: e.organizer ? `Organizer: ${e.organizer}` : undefined,
-        color: e.color,
-        startTime: `${e.date}T${e.start}:00.000Z`,
-        endTime: `${e.date}T${e.end}:00.000Z`,
-      }),
+      body: JSON.stringify(payload),
     });
 
     if (!res.ok) {
@@ -125,6 +129,9 @@ export default function CalendarClient() {
         start: new Date(created.startTime),
         end: new Date(created.endTime),
         status: created.status,
+        type: created.type,
+        typeOtherName: created.typeOtherName,
+        organizerName: created.createdBy?.name ?? null,
       },
     ]);
     setIsDialogOpen(false);
@@ -169,6 +176,7 @@ export default function CalendarClient() {
       {/* Scheduler Card (full height on mobile) */}
       <section className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-gray-900 p-4 md:p-6 shadow-sm min-h-[calc(100dvh-160px)]">
         <Scheduler
+          key={weekStart.toISOString()} // ADD THIS LINE
           selectedRoomName={selectedRoomName}
           events={events}
           onSlotClick={(isoDate: string, hour: number) => {

@@ -85,10 +85,13 @@ export default function HomeClient({ isAdmin = false }: { isAdmin?: boolean }) {
       body: JSON.stringify({
         roomId: selectedRoomId,
         title: e.title,
-        description: e.organizer ? `Organizer: ${e.organizer}` : undefined,
+        description: undefined,
         color: e.color,
         startTime: `${e.date}T${e.start}:00.000Z`,
         endTime: `${e.date}T${e.end}:00.000Z`,
+        type: e.type, // ADD THIS
+        typeOtherName: e.type === "OTHER" ? e.typeOtherName : undefined,
+        // ADD THIS
       }),
     });
 
@@ -123,6 +126,9 @@ export default function HomeClient({ isAdmin = false }: { isAdmin?: boolean }) {
         start: new Date(created.startTime),
         end: new Date(created.endTime),
         status: "ACTIVE" as const,
+        type: created.type,
+        typeOtherName: created.typeOtherName,
+        organizerName: created.createdBy?.name ?? null,
       },
     ]);
 

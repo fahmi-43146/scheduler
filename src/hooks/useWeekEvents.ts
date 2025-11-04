@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import EventItem from "@/types/event";
 
 export type EventDto = {
   id: string;
@@ -12,20 +13,17 @@ export type EventDto = {
   endTime: string; // ISO
   roomId: string;
   status: "ACTIVE" | "CANCELLED";
-
-
+  type: "PHD" | "THESIS" | "OTHER";         // ← NEW
+  typeOtherName?: string | null;   
+  room: { name: string };          // ← NEW
+ createdBy?: {
+    id: string;
+    name?: string | null;
+  } | null;
+ 
 };
 
-export type EventItem = {
-  id: string;
-  title: string;
-  start: Date;
-  end: Date;
-  color?: string;
-  status: "ACTIVE" | "CANCELLED";
 
-
-};
 
 export function useWeekEvents(opts: {
   roomId?: string;
@@ -62,6 +60,11 @@ export function useWeekEvents(opts: {
           status: e.status,
           start: new Date(e.startTime),
           end: new Date(e.endTime),
+          type: e.type,
+          typeOtherName: e.typeOtherName,
+          description: e.description,//now included
+          roomName: e.room.name,//now included
+          organizerName: e.createdBy?.name ?? null,
         }))
       );
     }catch (e: unknown) {

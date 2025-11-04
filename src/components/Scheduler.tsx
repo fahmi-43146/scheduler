@@ -8,15 +8,8 @@ import {
 import { useMemo, useState, useEffect, useRef } from "react";
 import DatePicker from "./DatePicker";
 import { useAdminEventActions } from "@/hooks/useAdminEventActions";
-
-type EventItem = {
-  id: string;
-  title: string;
-  start: Date;
-  end: Date;
-  color?: string;
-  status?: "ACTIVE" | "CANCELLED";
-};
+import EventHoverCard from "./EventBlock";
+import EventItem from "@/types/event";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -274,111 +267,108 @@ export default function Scheduler({
                   const isCancelled = (ev.status ?? "ACTIVE") === "CANCELLED";
 
                   return (
-                    <div
-                      key={ev.id}
-                      className={`absolute left-1 right-1 rounded-lg border border-opacity-30 text-white p-2 pointer-events-auto shadow-md hover:shadow-lg transition-shadow ${
-                        ev.color || "bg-orange-600"
-                      } ${
-                        isCancelled
-                          ? "opacity-70 grayscale"
-                          : "hover:brightness-110"
-                      } md:p-1.5 md:text-xs`}
-                      style={{ top, height }}
-                      title={`${ev.title} — ${pad2(ev.start.getHours())}:${pad2(
-                        ev.start.getMinutes()
-                      )}–${pad2(ev.end.getHours())}:${pad2(
-                        ev.end.getMinutes()
-                      )}`}
-                    >
-                      <div className="flex items-start justify-between gap-1">
-                        <div className="min-w-0 flex-1">
-                          <div className="font-semibold truncate text-sm md:text-xs">
-                            {ev.title}
-                          </div>
-                          <div className="opacity-90 truncate text-xs md:text-[11px] mt-0.5">
-                            {pad2(ev.start.getHours())}:
-                            {pad2(ev.start.getMinutes())} –{" "}
-                            {pad2(ev.end.getHours())}:
-                            {pad2(ev.end.getMinutes())}
-                          </div>
-                          {isCancelled && (
-                            <span className="mt-1 inline-block rounded bg-black/30 px-1.5 py-0.5 text-[10px] uppercase">
-                              Cancelled
-                            </span>
-                          )}
-                        </div>
-
-                        {/* Admin actions */}
-                        {isAdmin && (
-                          <div className="relative flex-shrink-0">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setMenuOpenId(
-                                  menuOpenId === ev.id ? null : ev.id
-                                );
-                              }}
-                              className="pointer-events-auto rounded p-1.5 hover:bg-black/20 transition-colors"
-                              aria-label="Event actions"
-                            >
-                              <MoreHorizontal className="w-5 h-5 md:w-4 md:h-4" />
-                            </button>
-
-                            {menuOpenId === ev.id && (
-                              <div
-                                className="absolute right-0 z-50 mt-1 w-36 rounded-lg border border-border bg-white dark:bg-slate-900 p-2 text-xs text-foreground shadow-2xl"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                {isCancelled ? (
-                                  <button
-                                    onClick={() => {
-                                      restore(ev.id);
-                                      setMenuOpenId(null);
-                                    }}
-                                    disabled={isLoading(ev.id)}
-                                    className="block w-full rounded px-3 py-1.5 text-left hover:bg-muted/50 disabled:opacity-50 transition-colors"
-                                  >
-                                    {isLoading(ev.id)
-                                      ? "Restoring…"
-                                      : "Restore"}
-                                  </button>
-                                ) : (
-                                  <button
-                                    onClick={() => {
-                                      cancel(ev.id);
-                                      setMenuOpenId(null);
-                                    }}
-                                    disabled={isLoading(ev.id)}
-                                    className="block w-full rounded px-3 py-1.5 text-left hover:bg-muted/50 disabled:opacity-50 transition-colors"
-                                  >
-                                    {isLoading(ev.id)
-                                      ? "Cancelling…"
-                                      : "Cancel"}
-                                  </button>
-                                )}
-
-                                <button
-                                  onClick={() => {
-                                    if (
-                                      window.confirm(
-                                        "Delete this event permanently?"
-                                      )
-                                    ) {
-                                      hardDelete(ev.id);
-                                      setMenuOpenId(null);
-                                    }
-                                  }}
-                                  disabled={isLoading(ev.id)}
-                                  className="mt-1 block w-full rounded px-3 py-1.5 text-left text-red-600 hover:bg-red-100 dark:hover:bg-red-900/50 disabled:opacity-50 transition-colors"
-                                >
-                                  {isLoading(ev.id) ? "Deleting…" : "Delete"}
-                                </button>
-                              </div>
+                    <EventHoverCard key={ev.id} event={ev} roomName={roomName}>
+                      <div
+                        className={`absolute left-1 right-1 rounded-lg border border-opacity-30 text-white p-2 pointer-events-auto shadow-md hover:shadow-lg transition-shadow ${
+                          ev.color || "bg-orange-600"
+                        } ${
+                          isCancelled
+                            ? "opacity-70 grayscale"
+                            : "hover:brightness-110"
+                        } md:p-1.5 md:text-xs`}
+                        style={{ top, height }}
+                      >
+                        {/* ← KEEP ALL YOUR INNER CONTENT */}
+                        <div className="flex items-start justify-between gap-1">
+                          <div className="min-w-0 flex-1">
+                            <div className="font-semibold truncate text-sm md:text-xs">
+                              {ev.title}
+                            </div>
+                            <div className="opacity-90 truncate text-xs md:text-[11px] mt-0.5">
+                              {pad2(ev.start.getHours())}:
+                              {pad2(ev.start.getMinutes())} –{" "}
+                              {pad2(ev.end.getHours())}:
+                              {pad2(ev.end.getMinutes())}
+                            </div>
+                            {isCancelled && (
+                              <span className="mt-1 inline-block rounded bg-black/30 px-1.5 py-0.5 text-[10px] uppercase">
+                                Cancelled
+                              </span>
                             )}
                           </div>
-                        )}
+
+                          {/* Admin menu */}
+                          {isAdmin && (
+                            <div className="relative flex-shrink-0">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setMenuOpenId(
+                                    menuOpenId === ev.id ? null : ev.id
+                                  );
+                                }}
+                                className="pointer-events-auto rounded p-1.5 hover:bg-black/20 transition-colors"
+                                aria-label="Event actions"
+                              >
+                                <MoreHorizontal className="w-5 h-5 md:w-4 md:h-4" />
+                              </button>
+
+                              {menuOpenId === ev.id && (
+                                <div
+                                  className="absolute right-0 z-50 mt-1 w-36 rounded-lg border border-border bg-white dark:bg-slate-900 p-2 text-xs text-foreground shadow-2xl"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  {isCancelled ? (
+                                    <button
+                                      onClick={() => {
+                                        restore(ev.id);
+                                        setMenuOpenId(null);
+                                      }}
+                                      disabled={isLoading(ev.id)}
+                                      className="block w-full rounded px-3 py-1.5 text-left  text-blue-900 hover:bg-muted/50 disabled:opacity-50 transition-colors"
+                                    >
+                                      {isLoading(ev.id)
+                                        ? "Restoring…"
+                                        : "Restore"}
+                                    </button>
+                                  ) : (
+                                    <button
+                                      onClick={() => {
+                                        cancel(ev.id);
+                                        setMenuOpenId(null);
+                                      }}
+                                      disabled={isLoading(ev.id)}
+                                      className="block w-full rounded px-3 py-1.5 text-left text-blue-900 hover:bg-muted/50 disabled:opacity-50 transition-colors"
+                                    >
+                                      {isLoading(ev.id)
+                                        ? "Cancelling…"
+                                        : "Cancel"}
+                                    </button>
+                                  )}
+
+                                  <button
+                                    onClick={() => {
+                                      if (
+                                        window.confirm(
+                                          "Delete this event permanently?"
+                                        )
+                                      ) {
+                                        hardDelete(ev.id);
+                                        setMenuOpenId(null);
+                                      }
+                                    }}
+                                    disabled={isLoading(ev.id)}
+                                    className="mt-1 block w-full rounded px-3 py-1.5 text-left text-red-600 hover:bg-red-100 dark:hover:bg-red-900/50 disabled:opacity-50 transition-colors"
+                                  >
+                                    {isLoading(ev.id) ? "Deleting…" : "Delete"}
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    </div>
+                    </EventHoverCard>
                   );
                 })}
               </div>
