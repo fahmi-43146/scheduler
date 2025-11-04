@@ -40,8 +40,8 @@ export default function Footer() {
             </h3>
             <p className="text-primary-foreground/80 text-xs sm:text-sm leading-relaxed text-balance">
               Une institution multidisciplinaire de premier plan dédiée à
-              l'excellence en enseignement, recherche et innovation dans les
-              sciences, l'ingénierie et la médecine.
+              l&rsquo;excellence en enseignement, recherche et innovation dans
+              les sciences, l&rsquo;ingénierie et la médecine.
             </p>
             <div className="flex gap-3 pt-1 justify-center md:justify-start">
               {socialLinks.map(({ Icon, label, href }) => (
@@ -119,7 +119,7 @@ export default function Footer() {
           </h3>
           <div className="rounded-xl overflow-hidden border border-border/20 shadow-lg h-48 md:h-80 mx-auto md:mx-0 max-w-md">
             <iframe
-              title="Carte de localisation de l’université"
+              title="Carte de localisation de l&rsquo;université"
               className="w-full h-full"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
@@ -148,7 +148,7 @@ export default function Footer() {
               href="#"
               className="hover:text-primary-foreground transition-colors"
             >
-              Conditions d'utilisation
+              Conditions d&rsquo;utilisation
             </a>
           </div>
         </div>
