@@ -112,6 +112,33 @@ export default function Scheduler({
     setMenuOpenId(null);
   }, [weekStartKey]);
 
+  // Close menu on click outside or Escape key
+  useEffect(() => {
+    if (!menuOpenId) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const menu = document.querySelector(`[data-event-menu="${menuOpenId}"]`);
+      if (menu && !menu.contains(target)) {
+        setMenuOpenId(null);
+      }
+    };
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setMenuOpenId(null);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside, true);
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside, true);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [menuOpenId]);
+
   return (
     <div className="rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden bg-white dark:bg-slate-950">
       {/* Header */}
@@ -261,7 +288,7 @@ export default function Scheduler({
                   const endY = minsSince(ev.end, startHour) * pxPerMinute;
                   const top = clampY(startY);
                   const bottom = clampY(endY);
-                  const height = Math.max(48, bottom - top); // ← UNCRUSHABLE
+                  const height = Math.max(48, bottom - top);
                   if (bottom <= top) return null;
 
                   const isCancelled = (ev.status ?? "ACTIVE") === "CANCELLED";
@@ -278,7 +305,6 @@ export default function Scheduler({
                         } md:p-1.5 md:text-xs`}
                         style={{ top, height }}
                       >
-                        {/* ← KEEP ALL YOUR INNER CONTENT */}
                         <div className="flex items-start justify-between gap-1">
                           <div className="min-w-0 flex-1">
                             <div className="font-semibold truncate text-sm md:text-xs">
@@ -291,7 +317,7 @@ export default function Scheduler({
                               {pad2(ev.end.getMinutes())}
                             </div>
                             {isCancelled && (
-                              <span className="mt-1 inline-block rounded bg-black/30 px-1.5 py-0.5 text-[10px] uppercase">
+                              <span className="mt-1 hidden md:inline rounded bg-black/30 px-1.5 py-0.5 text-[10px] uppercase">
                                 Cancelled
                               </span>
                             )}
@@ -315,6 +341,7 @@ export default function Scheduler({
 
                               {menuOpenId === ev.id && (
                                 <div
+                                  data-event-menu={ev.id}
                                   className="absolute right-0 z-50 mt-1 w-36 rounded-lg border border-border bg-white dark:bg-slate-900 p-2 text-xs text-foreground shadow-2xl"
                                   onClick={(e) => e.stopPropagation()}
                                 >
@@ -325,7 +352,7 @@ export default function Scheduler({
                                         setMenuOpenId(null);
                                       }}
                                       disabled={isLoading(ev.id)}
-                                      className="block w-full rounded px-3 py-1.5 text-left  text-blue-900 hover:bg-muted/50 disabled:opacity-50 transition-colors"
+                                      className="block w-full rounded px-3 py-1.5 text-left text-blue-900 hover:bg-muted/50 disabled:opacity-50 transition-colors"
                                     >
                                       {isLoading(ev.id)
                                         ? "Restoring…"
