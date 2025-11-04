@@ -12,7 +12,7 @@ export default function AboutPage() {
                 UT
               </div>
               <span className="text-lg font-semibold">
-                University of Tunis El Manar
+                Université de Tunis El Manar
               </span>
             </div>
             <div className="hidden md:flex gap-8">
@@ -20,19 +20,19 @@ export default function AboutPage() {
                 href="#about"
                 className="text-sm hover:text-primary transition-colors"
               >
-                About
+                À propos
               </a>
               <a
                 href="#programs"
                 className="text-sm hover:text-primary transition-colors"
               >
-                Programs
+                Formations
               </a>
               <a
                 href="#achievements"
                 className="text-sm hover:text-primary transition-colors"
               >
-                Achievements
+                Réalisations
               </a>
             </div>
           </div>
@@ -45,29 +45,31 @@ export default function AboutPage() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
               <div className="inline-block px-3 py-1 rounded-full bg-secondary text-secondary-foreground text-sm font-medium">
-                Est. 2000 • Tunis, Tunisia
+                Établie en 2000 • Tunis, Tunisie
               </div>
               <h1 className="text-4xl md:text-5xl font-bold text-balance leading-tight">
-                Faculty of Sciences
+                Faculté des Sciences
               </h1>
               <p className="text-lg text-muted-foreground max-w-lg">
-                Leading the advancement of scientific knowledge and innovation
-                in North Africa through excellence in research, education, and
-                community engagement.
+                À l'avant-garde de la connaissance scientifique et de
+                l'innovation en Afrique du Nord, grâce à l'excellence en
+                recherche, en enseignement et en engagement communautaire.
               </p>
               <div className="flex gap-4 pt-4">
                 <button className="px-6 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center gap-2">
-                  Explore Programs <ArrowRight className="w-4 h-4" />
+                  Découvrir les formations <ArrowRight className="w-4 h-4" />
                 </button>
                 <button className="px-6 py-3 border border-border rounded-lg font-medium hover:bg-secondary transition-colors">
-                  Learn More
+                  En savoir plus
                 </button>
               </div>
             </div>
             <div className="relative h-96 bg-linear-to-br from-secondary to-muted rounded-2xl border border-border flex items-center justify-center">
               <div className="text-center">
                 <Microscope className="w-24 h-24 mx-auto text-muted-foreground mb-4 opacity-50" />
-                <p className="text-muted-foreground">Hero Image Placeholder</p>
+                <p className="text-muted-foreground">
+                  Image principale (placeholder)
+                </p>
               </div>
             </div>
           </div>
@@ -79,41 +81,49 @@ export default function AboutPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="relative h-96 bg-linear-to-br from-secondary to-muted rounded-2xl border border-border flex items-center justify-center">
-              <p className="text-muted-foreground">Campus Image Placeholder</p>
+              <p className="text-muted-foreground">
+                Image du campus (placeholder)
+              </p>
             </div>
             <div className="space-y-6">
               <h2 className="text-3xl md:text-4xl font-bold">
-                About Our University
+                À propos de notre université
               </h2>
               <div className="space-y-4 text-muted-foreground">
                 <p>
-                  Founded in 2000, the University of Tunis El Manar stands as a
-                  premier multidisciplinary institution dedicated to advancing
-                  scientific knowledge and fostering innovation across North
-                  Africa.
+                  Fondée en 2000, l’Université de Tunis El Manar est une
+                  institution multidisciplinaire de premier plan dédiée à
+                  l’avancement des connaissances scientifiques et au
+                  développement de l’innovation à travers l’Afющейся du Nord.
                 </p>
                 <p>
-                  Our Faculty of Sciences is recognized internationally for
-                  excellence in fundamental sciences, engineering sciences,
-                  medical sciences, and computer sciences. We are committed to
-                  providing world-class education and conducting cutting-edge
-                  research that addresses global challenges.
+                  Notre Faculté des Sciences est reconnue internationalement
+                  pour son excellence dans les sciences fondamentales, les
+                  sciences de l’ingénieur, les sciences médicales et
+                  l’informatique. Nous nous engageons à offrir une formation de
+                  classe mondiale et à mener des recherches de pointe qui
+                  répondent aux défis mondiaux.
                 </p>
                 <p>
-                  With a diverse community of scholars, researchers, and
-                  students, we create an environment where intellectual
-                  curiosity thrives and transformative discoveries are made.
+                  Avec une communauté diversifiée de chercheurs, d’enseignants
+                  et d’étudiants, nous créons un environnement où la curiosité
+                  intellectuelle prospère et où des découvertes transformatrices
+                  sont réalisées.
                 </p>
               </div>
               <div className="grid grid-cols-2 gap-4 pt-6">
                 <div className="p-4 rounded-lg bg-secondary border border-border">
-                  <div className="text-2xl font-bold text-primary">2000+</div>
-                  <p className="text-sm text-muted-foreground">Students</p>
+                  <div className="text-2xl font-bold text-primary">
+                    + de 2 000
+                  </div>
+                  <p className="text-sm text-muted-foreground">Étudiants</p>
                 </div>
                 <div className="p-4 rounded-lg bg-secondary border border-border">
-                  <div className="text-2xl font-bold text-primary">500+</div>
+                  <div className="text-2xl font-bold text-primary">
+                    + de 500
+                  </div>
                   <p className="text-sm text-muted-foreground">
-                    Faculty Members
+                    Enseignants-chercheurs
                   </p>
                 </div>
               </div>
@@ -130,34 +140,34 @@ export default function AboutPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Academic Programs
+              Formations académiques
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Comprehensive programs designed to develop leaders and innovators
-              in science and technology
+              Des programmes complets conçus pour former des leaders et des
+              innovateurs en sciences et technologies
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
                 icon: BookOpen,
-                title: "Fundamental Sciences",
-                desc: "Mathematics, Physics, Chemistry, Biology",
+                title: "Sciences fondamentales",
+                desc: "Mathématiques, Physique, Chimie, Biologie",
               },
               {
                 icon: Microscope,
-                title: "Engineering Sciences",
-                desc: "Civil, Electrical, Mechanical Engineering",
+                title: "Sciences de l’ingénieur",
+                desc: "Génie civil, Électrique, Mécanique",
               },
               {
                 icon: Users,
-                title: "Medical Sciences",
-                desc: "Medicine, Pharmacy, Health Sciences",
+                title: "Sciences médicales",
+                desc: "Médecine, Pharmacie, Sciences de la santé",
               },
               {
                 icon: Award,
-                title: "Computer Sciences",
-                desc: "Computer Science, Information Technology",
+                title: "Informatique",
+                desc: "Informatique, Technologies de l’information",
               },
             ].map((program, idx) => (
               <div
@@ -181,37 +191,38 @@ export default function AboutPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Recognition & Achievements
+              Reconnaissance & Réalisations
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Recognized globally for our contributions to science and education
+              Reconnue mondialement pour nos contributions à la science et à
+              l’éducation
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
-                title: "International Rankings",
-                desc: "Ranked among top universities in Mathematics, Chemistry, and Computer Science",
+                title: "Classements internationaux",
+                desc: "Classée parmi les meilleures universités en Mathématiques, Chimie et Informatique",
               },
               {
-                title: "Research Excellence",
-                desc: "Leading research in Public Health, Agricultural Sciences, and Engineering",
+                title: "Excellence en recherche",
+                desc: "Recherche de pointe en santé publique, sciences agricoles et ingénierie",
               },
               {
-                title: "Global Partnerships",
-                desc: "Collaborations with prestigious institutions worldwide",
+                title: "Partenariats mondiaux",
+                desc: "Collaborations avec des institutions prestigieuses à travers le monde",
               },
               {
-                title: "Innovation Hub",
-                desc: "Fostering entrepreneurship and technological innovation",
+                title: "Pôle d’innovation",
+                desc: "Promotion de l’entrepreneuriat et de l’innovation technologique",
               },
               {
-                title: "Community Impact",
-                desc: "Serving society through applied research and outreach programs",
+                title: "Impact sociétal",
+                desc: "Au service de la société grâce à la recherche appliquée et aux programmes de sensibilisation",
               },
               {
-                title: "Student Success",
-                desc: "Graduates leading in academia, industry, and public service",
+                title: "Succès des diplômés",
+                desc: "Diplômés leaders dans l’enseignement, l’industrie et le service public",
               },
             ].map((achievement, idx) => (
               <div
@@ -233,18 +244,18 @@ export default function AboutPage() {
       <section className="py-20 md:py-32 bg-primary text-primary-foreground">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Join Our Community
+            Rejoignez notre communauté
           </h2>
           <p className="text-lg mb-8 opacity-90 max-w-2xl mx-auto">
-            Be part of a vibrant academic community dedicated to excellence,
-            innovation, and making a difference in the world.
+            Faites partie d’une communauté académique dynamique, dédiée à
+            l’excellence, à l’innovation et à l’impact positif dans le monde.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button className="px-8 py-3 bg-primary-foreground text-primary rounded-lg font-medium hover:opacity-90 transition-opacity">
-              Apply Now
+              Postuler maintenant
             </button>
             <button className="px-8 py-3 border-2 border-primary-foreground rounded-lg font-medium hover:bg-primary-foreground/10 transition-colors">
-              Contact Us
+              Nous contacter
             </button>
           </div>
         </div>
@@ -255,14 +266,14 @@ export default function AboutPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
-              <h4 className="font-semibold mb-4">University</h4>
+              <h4 className="font-semibold mb-4">Université</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
                   <a
                     href="#"
                     className="hover:text-foreground transition-colors"
                   >
-                    About
+                    À propos
                   </a>
                 </li>
                 <li>
@@ -278,20 +289,20 @@ export default function AboutPage() {
                     href="#"
                     className="hover:text-foreground transition-colors"
                   >
-                    Academics
+                    Formations
                   </a>
                 </li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Research</h4>
+              <h4 className="font-semibold mb-4">Recherche</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
                   <a
                     href="#"
                     className="hover:text-foreground transition-colors"
                   >
-                    Research Centers
+                    Centres de recherche
                   </a>
                 </li>
                 <li>
@@ -313,14 +324,14 @@ export default function AboutPage() {
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Community</h4>
+              <h4 className="font-semibold mb-4">Communauté</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
                   <a
                     href="#"
                     className="hover:text-foreground transition-colors"
                   >
-                    Events
+                    Événements
                   </a>
                 </li>
                 <li>
@@ -328,7 +339,7 @@ export default function AboutPage() {
                     href="#"
                     className="hover:text-foreground transition-colors"
                   >
-                    News
+                    Actualités
                   </a>
                 </li>
                 <li>
@@ -336,7 +347,7 @@ export default function AboutPage() {
                     href="#"
                     className="hover:text-foreground transition-colors"
                   >
-                    Alumni
+                    Anciens
                   </a>
                 </li>
               </ul>
@@ -344,7 +355,7 @@ export default function AboutPage() {
             <div>
               <h4 className="font-semibold mb-4">Contact</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>Tunis, Tunisia</li>
+                <li>Tunis, Tunisie</li>
                 <li>
                   <a
                     href="mailto:info@utm.tn"
@@ -366,14 +377,14 @@ export default function AboutPage() {
           </div>
           <div className="border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-muted-foreground">
             <p>
-              &copy; 2025 University of Tunis El Manar. All rights reserved.
+              &copy; 2025 Université de Tunis El Manar. Tous droits réservés.
             </p>
             <div className="flex gap-6 mt-4 md:mt-0">
               <a href="#" className="hover:text-foreground transition-colors">
-                Privacy Policy
+                Politique de confidentialité
               </a>
               <a href="#" className="hover:text-foreground transition-colors">
-                Terms of Service
+                Conditions d'utilisation
               </a>
             </div>
           </div>
