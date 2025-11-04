@@ -17,14 +17,15 @@ export default async function Dashboard() {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div>
               <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">
-                Welcome{me?.name ? `, ${me.name}` : ""}
+                Bienvenue{me?.name ? `, ${me.name}` : ""}
               </h1>
               <p className="mt-2 text-white/90">
-                Manage rooms, schedule events, and keep your calendar organized.
+                Gérez les salles, planifiez les événements et organisez votre
+                calendrier.
               </p>
               <div className="mt-4 flex flex-wrap items-center gap-2">
                 <span className="inline-flex items-center rounded-full bg-white/15 px-3 py-1 text-xs font-medium">
-                  Role: {role}
+                  Rôle : {role}
                 </span>
                 <span
                   className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${
@@ -33,7 +34,7 @@ export default async function Dashboard() {
                       : "bg-amber-500/20 text-amber-50"
                   }`}
                 >
-                  Status: {status}
+                  Statut : {status}
                 </span>
               </div>
             </div>
@@ -43,7 +44,7 @@ export default async function Dashboard() {
                 href="/calendar"
                 className="inline-flex items-center rounded-xl bg-white/10 px-4 py-2 text-sm font-medium backdrop-blur transition hover:bg-white/20 focus-visible:ring-2 focus-visible:ring-white/60 outline-none"
               >
-                Open Calendar
+                Ouvrir le calendrier
               </a>
               <a
                 href={canCreate ? "/calendar#new" : "/settings"}
@@ -52,9 +53,11 @@ export default async function Dashboard() {
                     ? "bg-white text-orange-700 hover:opacity-90 focus-visible:ring-white/60"
                     : "bg-black/20 text-white/90 hover:bg-black/30 focus-visible:ring-white/40"
                 }`}
-                title={canCreate ? "Create an event" : "Pending approval"}
+                title={
+                  canCreate ? "Créer un événement" : "En attente d’approbation"
+                }
               >
-                {canCreate ? "Create Event" : "Pending Approval"}
+                {canCreate ? "Créer un événement" : "En attente d’approbation"}
               </a>
             </div>
           </div>
@@ -64,10 +67,10 @@ export default async function Dashboard() {
       {/* Quick Stats */}
       <section className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: "This Week’s Events", value: "—" },
-          { label: "Active Rooms", value: "—" },
-          { label: "Pending Requests", value: "—" },
-          { label: "Your Role", value: role },
+          { label: "Événements de cette semaine", value: "—" },
+          { label: "Salles actives", value: "—" },
+          { label: "Demandes en attente", value: "—" },
+          { label: "Votre rôle", value: role },
         ].map((s) => (
           <div
             key={s.label}
@@ -89,23 +92,23 @@ export default async function Dashboard() {
         <div className="lg:col-span-2 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-gray-900 shadow-sm">
           <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-slate-800">
             <h2 className="text-base md:text-lg font-semibold text-slate-900 dark:text-slate-100">
-              Upcoming Events
+              Événements à venir
             </h2>
             <a
               href="/calendar"
               className="text-sm font-medium text-orange-700 dark:text-orange-400 hover:underline underline-offset-4"
             >
-              View calendar
+              Voir le calendrier
             </a>
           </div>
           <div className="p-4">
             {/* Empty state (no data fetch here) */}
             <div className="rounded-xl border border-dashed border-slate-300 dark:border-slate-700 p-6 text-center">
               <div className="text-sm text-slate-600 dark:text-slate-300">
-                No events to show here yet.
+                Aucun événement à afficher pour le moment.
               </div>
               <div className="mt-2 text-xs text-slate-500 dark:text-slate-400">
-                Create an event from the calendar view.
+                Créez un événement depuis la vue calendrier.
               </div>
             </div>
           </div>
@@ -115,7 +118,7 @@ export default async function Dashboard() {
         <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-gray-900 shadow-sm">
           <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-800">
             <h2 className="text-base md:text-lg font-semibold text-slate-900 dark:text-slate-100">
-              Quick Actions
+              Actions rapides
             </h2>
           </div>
           <div className="p-4 flex flex-col gap-3">
@@ -124,7 +127,7 @@ export default async function Dashboard() {
               className="group inline-flex items-center justify-between rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-gray-900 px-3 py-2 text-sm transition hover:bg-slate-50 dark:hover:bg-gray-800"
             >
               <span className="text-slate-700 dark:text-slate-200">
-                Account Settings
+                Paramètres du compte
               </span>
               <span className="text-slate-400 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition">
                 →
@@ -135,7 +138,7 @@ export default async function Dashboard() {
               className="group inline-flex items-center justify-between rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-gray-900 px-3 py-2 text-sm transition hover:bg-slate-50 dark:hover:bg-gray-800"
             >
               <span className="text-slate-700 dark:text-slate-200">
-                Manage Rooms
+                Gérer les salles
               </span>
               <span className="text-slate-400 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition">
                 →
@@ -149,18 +152,18 @@ export default async function Dashboard() {
                   : "bg-slate-100 text-slate-500 dark:bg-gray-800 dark:text-slate-400 cursor-not-allowed"
               }`}
             >
-              New Event
+              Nouvel événement
             </a>
 
             {/* Status Notice */}
             {!canCreate ? (
               <div className="mt-2 rounded-lg border border-amber-400/40 bg-amber-50 dark:bg-amber-950/20 text-amber-800 dark:text-amber-300 px-3 py-2 text-xs">
-                Your account is pending approval. You can browse but cant create
-                events yet.
+                Votre compte est en attente d’approbation. Vous pouvez naviguer
+                mais pas encore créer d’événements.
               </div>
             ) : (
               <div className="mt-2 rounded-lg border border-emerald-400/40 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-800 dark:text-emerald-300 px-3 py-2 text-xs">
-                You can create events.
+                Vous pouvez créer des événements.
               </div>
             )}
           </div>
