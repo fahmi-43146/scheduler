@@ -11,7 +11,7 @@ import { useAdminEventActions } from "@/hooks/useAdminEventActions";
 import EventHoverCard from "./EventBlock";
 import EventItem from "@/types/event";
 
-const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const DAYS = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 
 function startOfWeekMonday(d = new Date()) {
   const x = new Date(d);
@@ -142,7 +142,7 @@ export default function Scheduler({
   return (
     <div className="rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden bg-white dark:bg-slate-950">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-center justify-between bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-700 px-4 py-3 gap-3">
+      <div className="flex flex-col sm:flex-row items-center justify-betweentexte bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-700 px-4 py-3 gap-3">
         <div className="font-semibold text-orange-600 dark:text-orange-400 text-sm sm:text-base">
           {roomName}
         </div>
@@ -164,7 +164,7 @@ export default function Scheduler({
           </div>
         </div>
         <div className="text-sm text-slate-600 dark:text-slate-400 text-center sm:text-right">
-          Week of{" "}
+          Semaine du{" "}
           {weekStart.toLocaleDateString(undefined, {
             month: "short",
             day: "2-digit",
@@ -176,7 +176,7 @@ export default function Scheduler({
       {/* Day headers */}
       <div className="grid grid-cols-[88px_repeat(7,1fr)] bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 text-xs">
         <div className="px-3 py-2 text-slate-600 dark:text-slate-400 font-semibold">
-          Time
+          Heure
         </div>
         {weekDays.map((d, i) => (
           <div key={i} className="px-2 py-2 text-center">
@@ -318,7 +318,7 @@ export default function Scheduler({
                             </div>
                             {isCancelled && (
                               <span className="mt-1 hidden md:inline rounded bg-black/30 px-1.5 py-0.5 text-[10px] uppercase">
-                                Cancelled
+                                Annulé
                               </span>
                             )}
                           </div>
@@ -334,7 +334,7 @@ export default function Scheduler({
                                   );
                                 }}
                                 className="pointer-events-auto rounded p-1.5 hover:bg-black/20 transition-colors"
-                                aria-label="Event actions"
+                                aria-label="Actions de l'événement"
                               >
                                 <MoreHorizontal className="w-5 h-5 md:w-4 md:h-4" />
                               </button>
@@ -355,8 +355,8 @@ export default function Scheduler({
                                       className="block w-full rounded px-3 py-1.5 text-left text-blue-900 hover:bg-muted/50 disabled:opacity-50 transition-colors"
                                     >
                                       {isLoading(ev.id)
-                                        ? "Restoring…"
-                                        : "Restore"}
+                                        ? "Restauration…"
+                                        : "Restaurer"}
                                     </button>
                                   ) : (
                                     <button
@@ -368,8 +368,8 @@ export default function Scheduler({
                                       className="block w-full rounded px-3 py-1.5 text-left text-blue-900 hover:bg-muted/50 disabled:opacity-50 transition-colors"
                                     >
                                       {isLoading(ev.id)
-                                        ? "Cancelling…"
-                                        : "Cancel"}
+                                        ? "Annulation…"
+                                        : "Annuler"}
                                     </button>
                                   )}
 
@@ -377,7 +377,7 @@ export default function Scheduler({
                                     onClick={() => {
                                       if (
                                         window.confirm(
-                                          "Delete this event permanently?"
+                                          "Supprimer cet événement définitivement ?"
                                         )
                                       ) {
                                         hardDelete(ev.id);
@@ -387,7 +387,9 @@ export default function Scheduler({
                                     disabled={isLoading(ev.id)}
                                     className="mt-1 block w-full rounded px-3 py-1.5 text-left text-red-600 hover:bg-red-100 dark:hover:bg-red-900/50 disabled:opacity-50 transition-colors"
                                   >
-                                    {isLoading(ev.id) ? "Deleting…" : "Delete"}
+                                    {isLoading(ev.id)
+                                      ? "Suppression…"
+                                      : "Supprimer"}
                                   </button>
                                 </div>
                               )}
