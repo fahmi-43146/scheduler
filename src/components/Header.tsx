@@ -48,7 +48,7 @@ export default async function Header() {
               UT
             </div>
             <span className="hidden sm:inline text-lg font-semibold text-foreground">
-              University of Tunis
+              Université de Tunis
             </span>
             <span className="sm:hidden text-lg font-semibold text-foreground">
               UT
@@ -57,9 +57,9 @@ export default async function Header() {
 
           {/* === DESKTOP NAV (≥768px) === */}
           <div className="hidden md:flex items-center gap-3 flex-1 justify-center">
-            <NavLink href="/dashboard">Dashboard</NavLink>
-            {/* <NavLink href="/calendar">Calendar</NavLink> */}
-            <NavLink href="/about">About</NavLink>
+            <NavLink href="/dashboard">Tableau de bord</NavLink>
+            {/* <NavLink href="/calendar">Calendrier</NavLink> */}
+            <NavLink href="/about">À propos</NavLink>
             {isAdmin && <AdminMenu />}
           </div>
 
@@ -70,7 +70,7 @@ export default async function Header() {
                 href="/signup"
                 className="inline-flex items-center rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:bg-primary/90 transition-colors"
               >
-                Sign In
+                Se connecter
               </Link>
             ) : (
               <>
@@ -82,7 +82,7 @@ export default async function Header() {
                 {/* Sign Out Button */}
                 <form action={signOut}>
                   <button className="rounded-md px-3 py-2 text-sm font-medium bg-muted text-muted-foreground hover:bg-muted/80 transition-colors">
-                    Sign Out
+                    Se déconnecter
                   </button>
                 </form>
               </>
