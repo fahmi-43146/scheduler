@@ -116,7 +116,6 @@ export default function Scheduler({
 
   useEffect(() => setMenuOpenId(null), [weekStartKey]);
 
-  // Click outside & Escape
   useEffect(() => {
     if (!menuOpenId) return;
     const clickOut = (e: MouseEvent) => {
@@ -136,7 +135,6 @@ export default function Scheduler({
     };
   }, [menuOpenId]);
 
-  // Long press
   const handleLongPress = (evId: string) => {
     if (!isAdmin) return;
     setMenuOpenId(menuOpenId === evId ? null : evId);
@@ -149,7 +147,6 @@ export default function Scheduler({
     if (longPressTimer.current) clearTimeout(longPressTimer.current);
   };
 
-  // Pinch-to-zoom disable (mobile only)
   useEffect(() => {
     const preventZoom = (e: TouchEvent) => {
       if (e.touches.length > 1) e.preventDefault();
@@ -160,7 +157,6 @@ export default function Scheduler({
 
   return (
     <div className="rounded-2xl overflow-hidden bg-white dark:bg-gray-950 shadow-xl touch-none">
-      {/* ── STICKY HEADER ONLY ── */}
       <div className="sticky top-0 z-30 bg-white dark:bg-gray-950">
         <header className="flex flex-col xs:flex-row items-center justify-between border-b border-gray-200 dark:border-gray-800 px-4 py-3 gap-3">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
@@ -196,7 +192,6 @@ export default function Scheduler({
         </header>
       </div>
 
-      {/* ── SCROLLABLE GRID: Headers + Time + Days ── */}
       <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600">
         <div
           className="grid grid-cols-[72px_repeat(7,minmax(120px,1fr))] md:grid-cols-[88px_repeat(7,minmax(140px,1fr))]"
@@ -211,7 +206,7 @@ export default function Scheduler({
               key={i}
               className={`
                 px-2 py-2 text-center bg-gray-50 dark:bg-gray-900
-                ${i >= 5 ? "opacity-60" : ""}  /* Weekend dim */
+                ${i >= 5 ? "opacity-60" : ""}
                 ${isToday(d) ? "ring-2 ring-blue-500 ring-inset" : ""}
               `}
             >
@@ -226,7 +221,7 @@ export default function Scheduler({
 
           {/* TIME RAIL */}
           <div
-            className="relative bg-gray-50 dark:bg-gray-900/70 border-r border-gray-200 dark:border-gray-800 sticky left-0 z-10"
+            className="bg-gray-50 dark:bg-gray-900/70 border-r border-gray-200 dark:border-gray-800 sticky left-0 z-10"
             style={{ gridRow: "2 / -1", height: gridHeightPx }}
           >
             {Array.from(
@@ -271,13 +266,12 @@ export default function Scheduler({
             <div
               key={dayIdx}
               className={`
-                relative bg-white dark:bg-gray-950 border-l border-gray-200 dark:border-gray-800
-                ${dayIdx >= 5 ? "opacity-75" : ""}  /* Weekend dim */
+                bg-white dark:bg-gray-950 border-l border-gray-200 dark:border-gray-800
+                ${dayIdx >= 5 ? "opacity-75" : ""}
                 ${isToday(d) ? "bg-blue-50/20 dark:bg-blue-900/20" : ""}
               `}
               style={{ gridRow: "2 / -1", height: gridHeightPx }}
             >
-              {/* Slots */}
               {Array.from({ length: endHour - startHour }, (_, i) => {
                 const hasEvent = (eventsByDay.get(dayIdx) || []).some((ev) => {
                   const hourStart = new Date(d);
@@ -309,7 +303,6 @@ export default function Scheduler({
                 );
               })}
 
-              {/* Current time */}
               {isCurrentWeek && sameDay(d, new Date()) && nowY !== null && (
                 <div
                   className="absolute inset-x-0 h-0.5 bg-red-500 shadow-sm z-20"
@@ -317,7 +310,6 @@ export default function Scheduler({
                 />
               )}
 
-              {/* Events */}
               <div className="absolute inset-0 pointer-events-none">
                 {(eventsByDay.get(dayIdx) || []).map((ev) => {
                   const startY = minsSince(ev.start, startHour) * pxPerMinute;
@@ -340,9 +332,7 @@ export default function Scheduler({
                       onMouseUp={cancelLongPress}
                       onMouseLeave={cancelLongPress}
                     >
-                      {/* === EVENT BLOCK CONTAINER === */}
                       <div className="relative h-full">
-                        {/* === HOVERCARD: Only content === */}
                         <EventHoverCard event={ev} roomName={roomName}>
                           <div
                             className={`
@@ -354,7 +344,6 @@ export default function Scheduler({
                                 : "hover:brightness-110"
                             }
                             `}
-                            onClick={(e) => e.stopPropagation()}
                           >
                             <div className="flex-1 min-w-0">
                               <div className="font-medium truncate">
@@ -370,14 +359,12 @@ export default function Scheduler({
                           </div>
                         </EventHoverCard>
 
-                        {/* === STATUS BADGE === */}
                         {cancelled && (
                           <span className="absolute top-1 left-1 inline-block rounded bg-red-600/90 px-1.5 py-0.5 text-[9px] font-bold uppercase text-white shadow-sm z-10">
                             Annulé
                           </span>
                         )}
 
-                        {/* === ADMIN MENU BUTTON === */}
                         {isAdmin && (
                           <button
                             onClick={(e) => {
@@ -394,7 +381,6 @@ export default function Scheduler({
                         )}
                       </div>
 
-                      {/* === ADMIN DROPDOWN === */}
                       {isAdmin && menuOpenId === ev.id && (
                         <div
                           data-event-menu={ev.id}
