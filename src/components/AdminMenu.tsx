@@ -1,3 +1,5 @@
+// src/components/AdminMenu.tsx
+// src/components/AdminMenu.tsx
 "use client";
 
 import Link from "next/link";
@@ -13,7 +15,7 @@ export default function AdminMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="flex items-center gap-1 px-3 py-2 text-sm rounded-md hover:bg-muted transition-colors">
+        <button className="flex w-full items-center justify-between gap-1 px-3 py-2 text-sm rounded-md hover:bg-muted transition-colors">
           Admin <ChevronDown className="h-4 w-4" />
         </button>
       </DropdownMenuTrigger>
@@ -21,7 +23,7 @@ export default function AdminMenu() {
       <DropdownMenuContent
         align="start"
         sideOffset={6}
-        className="w-44 rounded-lg border border-border bg-white dark:bg-slate-900 text-popover-foreground shadow-2xl z-50"
+        className="w-44 rounded-lg border border-border bg-background text-popover-foreground shadow-2xl z-50"
       >
         <DropdownMenuItem asChild>
           <Link href="/admin/events" className="block w-full px-3 py-2 text-sm">
@@ -37,3 +39,44 @@ export default function AdminMenu() {
     </DropdownMenu>
   );
 }
+
+// //src\components\AdminMenu.tsx
+// "use client";
+
+// import Link from "next/link";
+// import { ChevronDown } from "lucide-react";
+// import {
+//   DropdownMenu,
+//   DropdownMenuTrigger,
+//   DropdownMenuContent,
+//   DropdownMenuItem,
+// } from "@/components/ui/dropdown-menu";
+
+// export default function AdminMenu() {
+//   return (
+//     <DropdownMenu>
+//       <DropdownMenuTrigger asChild>
+//         <button className="flex items-center gap-1 px-3 py-2 text-sm rounded-md hover:bg-muted transition-colors">
+//           Admin <ChevronDown className="h-4 w-4" />
+//         </button>
+//       </DropdownMenuTrigger>
+
+//       <DropdownMenuContent
+//         align="start"
+//         sideOffset={6}
+//         className="w-44 rounded-lg border border-border bg-white dark:bg-slate-900 text-popover-foreground shadow-2xl z-50"
+//       >
+//         <DropdownMenuItem asChild>
+//           <Link href="/admin/events" className="block w-full px-3 py-2 text-sm">
+//             Events
+//           </Link>
+//         </DropdownMenuItem>
+//         <DropdownMenuItem asChild>
+//           <Link href="/admin/users" className="block w-full px-3 py-2 text-sm">
+//             Users
+//           </Link>
+//         </DropdownMenuItem>
+//       </DropdownMenuContent>
+//     </DropdownMenu>
+//   );
+// }

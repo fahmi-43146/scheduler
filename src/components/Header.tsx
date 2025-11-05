@@ -1,8 +1,8 @@
+// src/components/Header.tsx
 import type React from "react";
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/auth";
 import { signOut } from "@/app/(auth)/actions";
-import AdminMenu from "./AdminMenu";
 import MobileMenu from "./MobileMenu";
 
 type AppUser = {
@@ -17,32 +17,38 @@ function isAdminUser(user: AppUser): boolean {
   return user?.isAdmin === true || role === "ADMIN";
 }
 
+/* --------------------------------------------------------------- */
+/*                         DESKTOP NAV LINK                         */
+/* --------------------------------------------------------------- */
+const NavLink = ({
+  href,
+  children,
+  className = "",
+}: {
+  href: string;
+  children: React.ReactNode;
+  className?: string;
+}) => (
+  <Link
+    href={href}
+    className={`text-sm font-medium hover:text-primary transition-colors rounded-md px-3 py-2 ${className}`}
+  >
+    {children}
+  </Link>
+);
+
+/* --------------------------------------------------------------- */
+/*                              HEADER                              */
+/* --------------------------------------------------------------- */
 export default async function Header() {
   const me = (await getCurrentUser()) as AppUser;
   const isAdmin = isAdminUser(me);
-
-  const NavLink = ({
-    href,
-    children,
-    className = "",
-  }: {
-    href: string;
-    children: React.ReactNode;
-    className?: string;
-  }) => (
-    <Link
-      href={href}
-      className={`text-sm font-medium hover:text-primary transition-colors rounded-md px-3 py-2 ${className}`}
-    >
-      {children}
-    </Link>
-  );
 
   return (
     <nav className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          {/* === BRAND (Always Visible) === */}
+          {/* ---------- BRAND (left) ---------- */}
           <Link href="/" className="flex items-center gap-2">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-lg">
               UT
@@ -55,15 +61,21 @@ export default async function Header() {
             </span>
           </Link>
 
-          {/* === DESKTOP NAV (≥768px) === */}
-          <div className="hidden md:flex items-center gap-3 flex-1 justify-center">
+          {/* ---------- DESKTOP NAV (center) ---------- */}
+          <div className="hidden md:flex flex-1 items-center justify-center gap-3">
             <NavLink href="/dashboard">Tableau de bord</NavLink>
-            {/* <NavLink href="/calendar">Calendrier</NavLink> */}
             <NavLink href="/about">À propos</NavLink>
-            {isAdmin && <AdminMenu />}
+
+            {/* ADMIN LINKS – no dropdown, same style as other links */}
+            {isAdmin && (
+              <>
+                <NavLink href="/admin/events">Events</NavLink>
+                <NavLink href="/admin/users">Users</NavLink>
+              </>
+            )}
           </div>
 
-          {/* === AUTH AREA (Always Visible) === */}
+          {/* ---------- AUTH AREA (right) ---------- */}
           <div className="flex items-center gap-3">
             {!me ? (
               <Link
@@ -74,12 +86,10 @@ export default async function Header() {
               </Link>
             ) : (
               <>
-                {/* User name — hidden on mobile */}
                 <span className="hidden sm:inline text-sm text-foreground/70 truncate max-w-32">
                   {me.name ?? ""}
                 </span>
 
-                {/* Sign Out Button */}
                 <form action={signOut}>
                   <button className="rounded-md px-3 py-2 text-sm font-medium bg-muted text-muted-foreground hover:bg-muted/80 transition-colors">
                     Se déconnecter
@@ -89,7 +99,7 @@ export default async function Header() {
             )}
           </div>
 
-          {/* === MOBILE MENU BUTTON (≤767px) === */}
+          {/* ---------- MOBILE MENU (rightmost) ---------- */}
           <div className="md:hidden">
             <MobileMenu isAdmin={isAdmin} me={me} />
           </div>

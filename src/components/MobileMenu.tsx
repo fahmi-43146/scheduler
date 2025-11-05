@@ -1,22 +1,69 @@
+// src/components/MobileMenu.tsx
+// src/components/MobileMenu.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { signOut } from "@/app/(auth)/actions";
-import AdminMenu from "./AdminMenu";
 
 type MobileMenuProps = {
   isAdmin: boolean;
   me: { name?: string | null } | null;
 };
 
+/* ------------------------------------------------------------------ */
+/*  Simple link component – closes the mobile menu when clicked       */
+/* ------------------------------------------------------------------ */
+function NavLink({
+  href,
+  children,
+  onClose,
+}: {
+  href: string;
+  children: React.ReactNode;
+  onClose: () => void;
+}) {
+  return (
+    <Link
+      href={href}
+      onClick={onClose}
+      className="block px-3 py-2 text-sm font-medium text-foreground hover:bg-muted/50 rounded-md transition-colors"
+    >
+      {children}
+    </Link>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*                         MOBILE MENU COMPONENT                      */
+/* ------------------------------------------------------------------ */
 export default function MobileMenu({ isAdmin, me }: MobileMenuProps) {
   const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+
+  /* ---- close on click outside ---- */
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    if (open) document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open]);
+
+  /* ---- close on route change ---- */
+  useEffect(() => setOpen(false), [pathname]);
+
+  const close = useCallback(() => setOpen(false), []);
 
   return (
-    <div className="relative">
+    <div className="relative" ref={menuRef}>
+      {/* Hamburger */}
       <button
-        onClick={() => setOpen(!open)}
+        onClick={() => setOpen((v) => !v)}
         className="p-2 rounded-md hover:bg-muted/50 transition-colors"
         aria-label="Toggle menu"
       >
@@ -35,59 +82,58 @@ export default function MobileMenu({ isAdmin, me }: MobileMenuProps) {
         </svg>
       </button>
 
+      {/* Dropdown panel */}
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-56 rounded-lg border border-border bg-white dark:bg-slate-900 shadow-2xl z-50">
+        <div className="absolute right-0 top-full mt-2 w-56 rounded-lg border border-border  bg-white dark:bg-gray-900 text-slate-900 dark:text-slate-200 shadow-2xl z-50">
           <div className="p-3 space-y-1">
-            <MobileNavLink href="/dashboard" onClose={() => setOpen(false)}>
+            <NavLink href="/dashboard" onClose={close}>
               Dashboard
-            </MobileNavLink>
-            <MobileNavLink href="/about" onClose={() => setOpen(false)}>
+            </NavLink>
+
+            <NavLink href="/about" onClose={close}>
               About
-            </MobileNavLink>
+            </NavLink>
+
+            {/* ---------- ADMIN LINKS (no dropdown) ---------- */}
             {isAdmin && (
-              <div className="px-3 py-2">
-                <AdminMenu />
-              </div>
+              <>
+                <NavLink href="/admin/events" onClose={close}>
+                  Events
+                </NavLink>
+
+                <NavLink href="/admin/users" onClose={close}>
+                  Users
+                </NavLink>
+              </>
             )}
 
+            {/* ---------- USER / SIGN‑OUT ---------- */}
             <div className="border-t border-border pt-2 mt-2">
               {me && (
                 <div className="px-3 py-2 text-sm text-foreground/70 truncate">
                   {me.name ?? ""}
                 </div>
               )}
-              <form action={signOut} className="w-full">
-                <button
-                  type="submit"
-                  className="w-full text-left px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted/50 rounded-md transition-colors"
-                >
-                  Sign Out
-                </button>
-              </form>
+
+              {me ? (
+                <form action={signOut} className="w-full">
+                  <button
+                    type="submit"
+                    onClick={close}
+                    className="w-full text-left px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted/50 rounded-md transition-colors"
+                  >
+                    Sign Out
+                  </button>
+                </form>
+              ) : (
+                <NavLink href="/signin" onClose={close}>
+                  Sign In
+                </NavLink>
+              )}
             </div>
           </div>
         </div>
       )}
     </div>
-  );
-}
-
-function MobileNavLink({
-  href,
-  children,
-  onClose,
-}: {
-  href: string;
-  children: React.ReactNode;
-  onClose: () => void;
-}) {
-  return (
-    <Link
-      href={href}
-      className="block px-3 py-2 text-sm font-medium text-foreground hover:bg-muted/50 rounded-md transition-colors"
-      onClick={onClose}
-    >
-      {children}
-    </Link>
   );
 }
