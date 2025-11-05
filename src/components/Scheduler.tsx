@@ -79,6 +79,10 @@ export default function Scheduler({
   const weekStartKey = useMemo(() => weekStart.getTime(), [weekStart]);
   const lastRangeKeyRef = useRef<string>("");
 
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const isToday = (d: Date) => sameDay(d, today);
+
   useEffect(() => {
     if (!onWeekChange) return;
     const key = `${weekStart.toISOString()}|${weekEnd.toISOString()}`;
@@ -132,24 +136,31 @@ export default function Scheduler({
     };
   }, [menuOpenId]);
 
-  // Long press handler
+  // Long press
   const handleLongPress = (evId: string) => {
     if (!isAdmin) return;
     setMenuOpenId(menuOpenId === evId ? null : evId);
   };
-
   const startLongPress = (evId: string) => {
     if (longPressTimer.current) clearTimeout(longPressTimer.current);
     longPressTimer.current = setTimeout(() => handleLongPress(evId), 500);
   };
-
   const cancelLongPress = () => {
     if (longPressTimer.current) clearTimeout(longPressTimer.current);
   };
 
+  // Pinch-to-zoom disable (mobile only)
+  useEffect(() => {
+    const preventZoom = (e: TouchEvent) => {
+      if (e.touches.length > 1) e.preventDefault();
+    };
+    document.addEventListener("touchmove", preventZoom, { passive: false });
+    return () => document.removeEventListener("touchmove", preventZoom);
+  }, []);
+
   return (
-    <div className="rounded-2xl overflow-hidden bg-white dark:bg-gray-950 shadow-xl">
-      {/* ── STICKY HEADER + DAY NAMES ── */}
+    <div className="rounded-2xl overflow-hidden bg-white dark:bg-gray-950 shadow-xl touch-none">
+      {/* ── STICKY HEADER ONLY ── */}
       <div className="sticky top-0 z-30 bg-white dark:bg-gray-950">
         <header className="flex flex-col xs:flex-row items-center justify-between border-b border-gray-200 dark:border-gray-800 px-4 py-3 gap-3">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
@@ -183,13 +194,27 @@ export default function Scheduler({
             })}
           </p>
         </header>
+      </div>
 
-        <div className="grid grid-cols-[72px_repeat(7,minmax(120px,1fr))] md:grid-cols-[88px_repeat(7,minmax(140px,1fr))] bg-gray-50 dark:bg-gray-900 text-sm">
-          <div className="px-3 py-2 font-medium text-gray-600 dark:text-gray-400">
+      {/* ── SCROLLABLE GRID: Headers + Time + Days ── */}
+      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600">
+        <div
+          className="grid grid-cols-[72px_repeat(7,minmax(120px,1fr))] md:grid-cols-[88px_repeat(7,minmax(140px,1fr))]"
+          style={{ minWidth: "fit-content" }}
+        >
+          {/* DAY HEADERS */}
+          <div className="col-span-1 px-3 py-2 font-medium text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-900 sticky left-0 z-10">
             Heure
           </div>
           {weekDays.map((d, i) => (
-            <div key={i} className="px-2 py-2 text-center">
+            <div
+              key={i}
+              className={`
+                px-2 py-2 text-center bg-gray-50 dark:bg-gray-900
+                ${i >= 5 ? "opacity-60" : ""}  /* Weekend dim */
+                ${isToday(d) ? "ring-2 ring-blue-500 ring-inset" : ""}
+              `}
+            >
               <div className="font-semibold text-gray-900 dark:text-gray-100">
                 {DAYS[i]}
               </div>
@@ -198,19 +223,11 @@ export default function Scheduler({
               </div>
             </div>
           ))}
-        </div>
-      </div>
 
-      {/* ── SCROLLABLE GRID ── */}
-      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600">
-        <div
-          className="grid grid-cols-[72px_repeat(7,minmax(120px,1fr))] md:grid-cols-[88px_repeat(7,minmax(140px,1fr))]"
-          style={{ minWidth: "fit-content" }}
-        >
-          {/* Time Rail */}
+          {/* TIME RAIL */}
           <div
-            className="relative bg-gray-50 dark:bg-gray-900/70 border-r border-gray-200 dark:border-gray-800"
-            style={{ height: gridHeightPx }}
+            className="relative bg-gray-50 dark:bg-gray-900/70 border-r border-gray-200 dark:border-gray-800 sticky left-0 z-10"
+            style={{ gridRow: "2 / -1", height: gridHeightPx }}
           >
             {Array.from(
               { length: endHour - startHour + 1 },
@@ -249,12 +266,16 @@ export default function Scheduler({
             })}
           </div>
 
-          {/* Day Columns */}
+          {/* DAY COLUMNS */}
           {weekDays.map((d, dayIdx) => (
             <div
               key={dayIdx}
-              className="relative bg-white dark:bg-gray-950 border-l border-gray-200 dark:border-gray-800"
-              style={{ height: gridHeightPx }}
+              className={`
+                relative bg-white dark:bg-gray-950 border-l border-gray-200 dark:border-gray-800
+                ${dayIdx >= 5 ? "opacity-75" : ""}  /* Weekend dim */
+                ${isToday(d) ? "bg-blue-50/20 dark:bg-blue-900/20" : ""}
+              `}
+              style={{ gridRow: "2 / -1", height: gridHeightPx }}
             >
               {/* Slots */}
               {Array.from({ length: endHour - startHour }, (_, i) => {
@@ -291,7 +312,7 @@ export default function Scheduler({
               {/* Current time */}
               {isCurrentWeek && sameDay(d, new Date()) && nowY !== null && (
                 <div
-                  className="absolute inset-x-0 h-0.5 bg-red-500 shadow-sm"
+                  className="absolute inset-x-0 h-0.5 bg-red-500 shadow-sm z-20"
                   style={{ top: nowY }}
                 />
               )}
@@ -312,7 +333,6 @@ export default function Scheduler({
                       key={ev.id}
                       className="absolute left-1 right-1 pointer-events-auto"
                       style={{ top, height }}
-                      // Long press on mobile
                       onTouchStart={() => isAdmin && startLongPress(ev.id)}
                       onTouchEnd={cancelLongPress}
                       onTouchMove={cancelLongPress}
@@ -320,54 +340,61 @@ export default function Scheduler({
                       onMouseUp={cancelLongPress}
                       onMouseLeave={cancelLongPress}
                     >
-                      {/* HoverCard — only content */}
-                      <EventHoverCard event={ev} roomName={roomName}>
-                        <div
-                          className={`
-                            h-full rounded-xl p-2 text-white shadow-lg hover:shadow-xl transition-shadow
-                            min-h-[44px] text-sm sm:text-xs flex flex-col justify-between
-                            ${ev.color || "bg-blue-600"} ${
-                            cancelled
-                              ? "opacity-70 grayscale"
-                              : "hover:brightness-110"
-                          }
-                          `}
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <div className="flex-1 min-w-0">
-                            <div className="font-medium truncate">
-                              {ev.title}
-                            </div>
-                            <div className="text-xs opacity-90 truncate">
-                              {pad2(ev.start.getHours())}:
-                              {pad2(ev.start.getMinutes())} –{" "}
-                              {pad2(ev.end.getHours())}:
-                              {pad2(ev.end.getMinutes())}
+                      {/* === EVENT BLOCK CONTAINER === */}
+                      <div className="relative h-full">
+                        {/* === HOVERCARD: Only content === */}
+                        <EventHoverCard event={ev} roomName={roomName}>
+                          <div
+                            className={`
+                              h-full rounded-xl p-2 text-white shadow-lg hover:shadow-xl transition-shadow
+                              min-h-[44px] text-sm sm:text-xs flex flex-col justify-between cursor-pointer
+                              ${ev.color || "bg-blue-600"} ${
+                              cancelled
+                                ? "opacity-70 grayscale"
+                                : "hover:brightness-110"
+                            }
+                            `}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <div className="flex-1 min-w-0">
+                              <div className="font-medium truncate">
+                                {ev.title}
+                              </div>
+                              <div className="text-xs opacity-90 truncate">
+                                {pad2(ev.start.getHours())}:
+                                {pad2(ev.start.getMinutes())} –{" "}
+                                {pad2(ev.end.getHours())}:
+                                {pad2(ev.end.getMinutes())}
+                              </div>
                             </div>
                           </div>
-                          {cancelled && (
-                            <span className="mt-1 hidden sm:inline-block rounded bg-black/30 px-1.5 py-0.5 text-[10px] uppercase self-start">
-                              Annulé
-                            </span>
-                          )}
-                        </div>
-                      </EventHoverCard>
+                        </EventHoverCard>
 
-                      {/* Admin Menu Button — OUTSIDE */}
-                      {isAdmin && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setMenuOpenId(menuOpenId === ev.id ? null : ev.id);
-                          }}
-                          className="absolute top-1 right-1 p-1.5 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
-                          aria-label="Actions"
-                        >
-                          <MoreHorizontal className="w-4 h-4 text-white" />
-                        </button>
-                      )}
+                        {/* === STATUS BADGE === */}
+                        {cancelled && (
+                          <span className="absolute top-1 left-1 inline-block rounded bg-red-600/90 px-1.5 py-0.5 text-[9px] font-bold uppercase text-white shadow-sm z-10">
+                            Annulé
+                          </span>
+                        )}
 
-                      {/* Admin Dropdown */}
+                        {/* === ADMIN MENU BUTTON === */}
+                        {isAdmin && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setMenuOpenId(
+                                menuOpenId === ev.id ? null : ev.id
+                              );
+                            }}
+                            className="absolute top-1 right-1 p-1.5 rounded-full bg-white/20 hover:bg-white/30 transition-colors z-10"
+                            aria-label="Actions"
+                          >
+                            <MoreHorizontal className="w-4 h-4 text-white" />
+                          </button>
+                        )}
+                      </div>
+
+                      {/* === ADMIN DROPDOWN === */}
                       {isAdmin && menuOpenId === ev.id && (
                         <div
                           data-event-menu={ev.id}
