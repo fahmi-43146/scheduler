@@ -136,7 +136,7 @@ export default function Scheduler({
     };
   }, [menuOpenId]);
 
-  // Long press for admin menu (mobile)
+  // Long press for admin menu
   const startLongPress = (evId: string) => {
     if (!isAdmin) return;
     if (longPressTimer.current) clearTimeout(longPressTimer.current);
@@ -146,7 +146,7 @@ export default function Scheduler({
     if (longPressTimer.current) clearTimeout(longPressTimer.current);
   };
 
-  // Pinch-to-zoom disable
+  // Disable pinch-to-zoom
   useEffect(() => {
     const preventZoom = (e: TouchEvent) => {
       if (e.touches.length > 1) e.preventDefault();
@@ -157,7 +157,7 @@ export default function Scheduler({
 
   return (
     <div className="rounded-2xl overflow-hidden bg-white dark:bg-gray-950 shadow-xl">
-      {/* HEADER */}
+      {/* === HEADER === */}
       <div className="sticky top-0 z-30 bg-white dark:bg-gray-950">
         <header className="flex flex-col xs:flex-row items-center justify-between border-b border-gray-200 dark:border-gray-800 px-4 py-3 gap-3">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
@@ -193,43 +193,42 @@ export default function Scheduler({
         </header>
       </div>
 
-      {/* GRID */}
+      {/* === FIXED DAY HEADERS (OUTSIDE SCROLL) === */}
+      <div className="grid grid-cols-[72px_repeat(7,minmax(120px,1fr))] md:grid-cols-[88px_repeat(7,minmax(140px,1fr))] bg-gray-50 dark:bg-gray-900">
+        <div className="col-span-1 px-3 py-2 font-medium text-gray-600 dark:text-gray-400 sticky left-0 z-10 bg-gray-50 dark:bg-gray-900">
+          Heure
+        </div>
+        {weekDays.map((d, i) => (
+          <div
+            key={i}
+            className={`
+              px-2 py-2 text-center
+              ${i >= 5 ? "opacity-60" : ""}
+              ${isToday(d) ? "ring-2 ring-blue-500 ring-inset" : ""}
+            `}
+          >
+            <div className="font-semibold text-gray-900 dark:text-gray-100">
+              {DAYS[i]}
+            </div>
+            <div className="text-xs text-gray-500 dark:text-gray-500 mt-0.5">
+              {d.getDate()}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* === SCROLLABLE GRID (TIME + EVENTS) === */}
       <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600">
         <div
           className="grid grid-cols-[72px_repeat(7,minmax(120px,1fr))] md:grid-cols-[88px_repeat(7,minmax(140px,1fr))]"
           style={{ minWidth: "fit-content" }}
         >
-          {/* DAY HEADERS */}
-          <div className="col-span-1 px-3 py-2 font-medium text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-900 sticky left-0 z-10">
-            Heure
-          </div>
-          {weekDays.map((d, i) => (
-            <div
-              key={i}
-              className={`
-                px-2 py-2 text-center bg-gray-50 dark:bg-gray-900
-                ${i >= 5 ? "opacity-60" : ""}
-                ${isToday(d) ? "ring-2 ring-blue-500 ring-inset" : ""}
-              `}
-            >
-              <div className="font-semibold text-gray-900 dark:text-gray-100">
-                {DAYS[i]}
-              </div>
-              <div className="text-xs text-gray-500 dark:text-gray-500 mt-0.5">
-                {d.getDate()}
-              </div>
-            </div>
-          ))}
-
           {/* TIME RAIL */}
           <div
             className="bg-gray-50 dark:bg-gray-900/70 border-r border-gray-200 dark:border-gray-800 sticky left-0 z-10"
-            style={{ gridRow: "2 / -1", height: gridHeightPx }}
+            style={{ height: gridHeightPx }}
           >
-            {Array.from(
-              { length: endHour - startHour + 1 },
-              (_, i) => startHour + i
-            ).map((_, i) => {
+            {Array.from({ length: endHour - startHour + 1 }, (_, i) => {
               const y = clampY(i * 60 * pxPerMinute);
               return (
                 <div
@@ -244,10 +243,8 @@ export default function Scheduler({
               );
             })}
 
-            {Array.from(
-              { length: endHour - startHour },
-              (_, i) => startHour + i
-            ).map((h, i) => {
+            {Array.from({ length: endHour - startHour }, (_, i) => {
+              const h = startHour + i;
               const centerY = clampY((i * 60 + 30) * pxPerMinute);
               return (
                 <div
@@ -272,7 +269,7 @@ export default function Scheduler({
                 ${dayIdx >= 5 ? "opacity-75" : ""}
                 ${isToday(d) ? "bg-blue-50/20 dark:bg-blue-900/20" : ""}
               `}
-              style={{ gridRow: "2 / -1", height: gridHeightPx }}
+              style={{ height: gridHeightPx }}
             >
               {/* SLOTS */}
               {Array.from({ length: endHour - startHour }, (_, i) => {
@@ -306,7 +303,7 @@ export default function Scheduler({
                 );
               })}
 
-              {/* CURRENT TIME */}
+              {/* CURRENT TIME LINE */}
               {isCurrentWeek && sameDay(d, new Date()) && nowY !== null && (
                 <div
                   className="absolute inset-x-0 h-0.5 bg-red-500 shadow-sm z-20"
@@ -314,7 +311,7 @@ export default function Scheduler({
                 />
               )}
 
-              {/* EVENTS — YOUR ORIGINAL STRUCTURE */}
+              {/* EVENTS */}
               <div className="absolute inset-0 pointer-events-none">
                 {(eventsByDay.get(dayIdx) || []).map((ev) => {
                   const startY = minsSince(ev.start, startHour) * pxPerMinute;
