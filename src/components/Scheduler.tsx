@@ -13,6 +13,7 @@ import EventItem from "@/types/event";
 
 const DAYS = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 
+/* ──────────────────────  SAME LOGIC  ────────────────────── */
 function startOfWeekMonday(d = new Date()) {
   const x = new Date(d);
   const diff = (x.getDay() + 6) % 7;
@@ -39,6 +40,7 @@ const minsSince = (d: Date, startHour: number) => {
   return totalEventMinutes - startMinutes;
 };
 
+/* ──────────────────────  COMPONENT  ────────────────────── */
 export default function Scheduler({
   selectedRoomName,
   events = [],
@@ -46,7 +48,7 @@ export default function Scheduler({
   onWeekChange,
   isAdmin = false,
   updateEvents,
-  hourHeight = 40,
+  hourHeight = 48, // ← a bit taller = modern feel
 }: {
   selectedRoomName?: string;
   events?: EventItem[];
@@ -64,6 +66,7 @@ export default function Scheduler({
   const startHour = 8;
   const endHour = 20;
   const pxPerMinute = hourHeight / 60;
+
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const weekStart = useMemo(
     () => startOfWeekMonday(selectedDate),
@@ -108,96 +111,99 @@ export default function Scheduler({
       ? clampY(minsSince(now, startHour) * pxPerMinute)
       : null;
 
-  useEffect(() => {
-    setMenuOpenId(null);
-  }, [weekStartKey]);
+  useEffect(() => setMenuOpenId(null), [weekStartKey]);
 
-  // Close menu on click outside or Escape key
+  // ── click-outside / Escape ──
   useEffect(() => {
     if (!menuOpenId) return;
-
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
+    const clickOut = (e: MouseEvent) => {
       const menu = document.querySelector(`[data-event-menu="${menuOpenId}"]`);
-      if (menu && !menu.contains(target)) {
+      if (
+        menu &&
+        !(e.target as HTMLElement).closest(`[data-event-menu="${menuOpenId}"]`)
+      )
         setMenuOpenId(null);
-      }
     };
-
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setMenuOpenId(null);
-      }
-    };
-
-    document.addEventListener("click", handleClickOutside, true);
-    document.addEventListener("keydown", handleEscape);
-
+    const esc = (e: KeyboardEvent) => e.key === "Escape" && setMenuOpenId(null);
+    document.addEventListener("mousedown", clickOut, true);
+    document.addEventListener("keydown", esc);
     return () => {
-      document.removeEventListener("click", handleClickOutside, true);
-      document.removeEventListener("keydown", handleEscape);
+      document.removeEventListener("mousedown", clickOut, true);
+      document.removeEventListener("keydown", esc);
     };
   }, [menuOpenId]);
 
+  /* ──────────────────────  RENDER  ────────────────────── */
   return (
-    <div className="rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden bg-white dark:bg-slate-950">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row items-center justify-betweentexte bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-700 px-4 py-3 gap-3">
-        <div className="font-semibold text-orange-600 dark:text-orange-400 text-sm sm:text-base">
+    <div className="rounded-2xl overflow-hidden bg-white dark:bg-gray-950 shadow-xl">
+      {/* ── Header (Google-style) ── */}
+      <header className="sticky top-0 z-30 flex flex-col xs:flex-row items-center justify-between bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 px-4 py-3 gap-3">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
           {roomName}
-        </div>
+        </h2>
+
         <div className="flex items-center gap-2">
           <DatePicker onSelect={(d: Date) => setSelectedDate(d)} />
-          <div className="flex items-center gap-1">
+          <div className="flex rounded-lg overflow-hidden border border-gray-300 dark:border-gray-700">
             <button
               onClick={() => setSelectedDate((d) => addDays(d, -7))}
-              className="rounded p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+              aria-label="Semaine précédente"
             >
-              <ChevronLeftIcon className="w-5 h-5 text-slate-600 dark:text-slate-400" />
+              <ChevronLeftIcon className="w-5 h-5" />
             </button>
             <button
               onClick={() => setSelectedDate((d) => addDays(d, 7))}
-              className="rounded p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+              aria-label="Semaine suivante"
             >
-              <ChevronRightIcon className="w-5 h-5 text-slate-600 dark:text-slate-400" />
+              <ChevronRightIcon className="w-5 h-5" />
             </button>
           </div>
         </div>
-        <div className="text-sm text-slate-600 dark:text-slate-400 text-center sm:text-right">
+
+        <p className="text-sm text-gray-600 dark:text-gray-400">
           Semaine du{" "}
           {weekStart.toLocaleDateString(undefined, {
             month: "short",
-            day: "2-digit",
+            day: "numeric",
             year: "numeric",
           })}
-        </div>
-      </div>
+        </p>
+      </header>
 
-      {/* Day headers */}
-      <div className="grid grid-cols-[88px_repeat(7,1fr)] bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 text-xs">
-        <div className="px-3 py-2 text-slate-600 dark:text-slate-400 font-semibold">
+      {/* ── Day headers (sticky) ── */}
+      <div
+        className="sticky top-[68px] z-20 grid grid-cols-[72px_repeat(7,minmax(120px,1fr))] md:grid-cols-[88px_repeat(7,minmax(140px,1fr))]
+          bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 text-sm"
+      >
+        <div className="px-3 py-2 font-medium text-gray-600 dark:text-gray-400">
           Heure
         </div>
         {weekDays.map((d, i) => (
           <div key={i} className="px-2 py-2 text-center">
-            <div className="text-slate-900 dark:text-slate-100 text-sm font-semibold">
+            <div className="font-semibold text-gray-900 dark:text-gray-100">
               {DAYS[i]}
             </div>
-            <div className="text-slate-500 dark:text-slate-500 text-xs mt-0.5">
+            <div className="text-xs text-gray-500 dark:text-gray-500 mt-0.5">
               {d.getDate()}
             </div>
           </div>
         ))}
       </div>
 
-      {/* Grid */}
-      <div className="relative overflow-x-auto">
-        <div className="grid grid-cols-[88px_repeat(7,1fr)]">
-          {/* Time rail */}
+      {/* ── Scrollable grid ── */}
+      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600">
+        <div
+          className="grid grid-cols-[72px_repeat(7,minmax(120px,1fr))] md:grid-cols-[88px_repeat(7,minmax(140px,1fr))]"
+          style={{ minWidth: "fit-content" }}
+        >
+          {/* ── Time rail ── */}
           <div
-            className="relative bg-slate-50 dark:bg-slate-900/50 border-r border-slate-200 dark:border-slate-700"
+            className="relative bg-gray-50 dark:bg-gray-900/70 border-r border-gray-200 dark:border-gray-800"
             style={{ height: gridHeightPx }}
           >
+            {/* hour lines */}
             {Array.from(
               { length: endHour - startHour + 1 },
               (_, i) => startHour + i
@@ -206,16 +212,17 @@ export default function Scheduler({
               return (
                 <div
                   key={`line-${i}`}
-                  className={`absolute left-0 right-0 ${
+                  className={`absolute inset-x-0 h-px ${
                     i % 2 === 0
-                      ? "border-t border-slate-300 dark:border-slate-700"
-                      : "border-t border-slate-200 dark:border-slate-800"
+                      ? "bg-gray-300 dark:bg-gray-700"
+                      : "bg-gray-200 dark:bg-gray-800"
                   }`}
                   style={{ top: y }}
                 />
               );
             })}
 
+            {/* hour labels */}
             {Array.from(
               { length: endHour - startHour },
               (_, i) => startHour + i
@@ -224,10 +231,10 @@ export default function Scheduler({
               return (
                 <div
                   key={`label-${h}`}
-                  className="absolute left-0 right-0"
+                  className="absolute inset-x-0"
                   style={{ top: centerY }}
                 >
-                  <div className="ml-2 inline-flex items-center rounded bg-white dark:bg-slate-800 px-2 py-0.5 text-xs font-semibold text-slate-700 dark:text-slate-200 -translate-y-1/2">
+                  <div className="ml-2 inline-flex items-center rounded bg-white dark:bg-gray-800 px-2 py-0.5 text-xs font-medium text-gray-700 dark:text-gray-300 -translate-y-1/2">
                     {String(h).padStart(2, "0")}:00
                   </div>
                 </div>
@@ -235,89 +242,92 @@ export default function Scheduler({
             })}
           </div>
 
-          {/* Day columns */}
+          {/* ── Day columns ── */}
           {weekDays.map((d, dayIdx) => (
             <div
               key={dayIdx}
-              className="relative bg-white dark:bg-slate-950 border-l border-slate-200 dark:border-slate-700"
+              className="relative bg-white dark:bg-gray-950 border-l border-gray-200 dark:border-gray-800"
               style={{ height: gridHeightPx }}
             >
-              {/* Clickable hour slots */}
-              {Array.from({ length: endHour - startHour }, (_, i) => (
-                <div
-                  key={i}
-                  onClick={() => {
-                    const iso = `${d.getFullYear()}-${String(
-                      d.getMonth() + 1
-                    ).padStart(2, "0")}-${String(d.getDate()).padStart(
-                      2,
-                      "0"
-                    )}`;
-                    onSlotClick?.(iso, startHour + i);
-                  }}
-                  className={`absolute left-0 right-0 cursor-pointer transition-colors border-t border-slate-200 dark:border-slate-800 hover:border-orange-400 hover:bg-orange-orange-50 dark:hover:bg-orange-950/30 ${
-                    (eventsByDay.get(dayIdx) || []).some((ev) => {
-                      const hourStart = new Date(d);
-                      hourStart.setHours(startHour + i, 0, 0, 0);
-                      const hourEnd = new Date(hourStart);
-                      hourEnd.setMinutes(hourEnd.getMinutes() + 60);
-                      return ev.start < hourEnd && ev.end > hourStart;
-                    })
-                      ? "bg-orange-50/50 dark:bg-orange-950/15"
-                      : ""
-                  }`}
-                  style={{
-                    top: i * 60 * pxPerMinute,
-                    height: 60 * pxPerMinute,
-                  }}
-                />
-              ))}
+              {/* clickable hour slots */}
+              {Array.from({ length: endHour - startHour }, (_, i) => {
+                const hasEvent = (eventsByDay.get(dayIdx) || []).some((ev) => {
+                  const hourStart = new Date(d);
+                  hourStart.setHours(startHour + i, 0, 0, 0);
+                  const hourEnd = new Date(hourStart);
+                  hourEnd.setMinutes(hourEnd.getMinutes() + 60);
+                  return ev.start < hourEnd && ev.end > hourStart;
+                });
 
-              {/* Current time line */}
+                return (
+                  <div
+                    key={i}
+                    onClick={() => {
+                      const iso = `${d.getFullYear()}-${pad2(
+                        d.getMonth() + 1
+                      )}-${pad2(d.getDate())}`;
+                      onSlotClick?.(iso, startHour + i);
+                    }}
+                    className={`
+                      absolute inset-x-0 cursor-pointer border-t border-gray-200 dark:border-gray-800
+                      hover:bg-blue-50 dark:hover:bg-blue-900/20 active:bg-blue-100 dark:active:bg-blue-800/30
+                      ${hasEvent ? "bg-blue-50/30 dark:bg-blue-900/10" : ""}
+                    `}
+                    style={{
+                      top: i * 60 * pxPerMinute,
+                      height: 60 * pxPerMinute,
+                    }}
+                  />
+                );
+              })}
+
+              {/* current-time line */}
               {isCurrentWeek && sameDay(d, new Date()) && nowY !== null && (
                 <div
-                  className="absolute left-0 right-0 h-0.5 bg-orange-500 shadow-sm"
+                  className="absolute inset-x-0 h-0.5 bg-red-500 shadow-sm"
                   style={{ top: nowY }}
                 />
               )}
 
-              {/* Events */}
+              {/* ── Events ── */}
               <div className="absolute inset-0 pointer-events-none">
                 {(eventsByDay.get(dayIdx) || []).map((ev) => {
                   const startY = minsSince(ev.start, startHour) * pxPerMinute;
                   const endY = minsSince(ev.end, startHour) * pxPerMinute;
                   const top = clampY(startY);
-                  const bottom = clampY(endY);
-                  const height = Math.max(48, bottom - top);
-                  if (bottom <= top) return null;
+                  const height = Math.max(44, clampY(endY) - top);
+                  if (height < 44) return null;
 
-                  const isCancelled = (ev.status ?? "ACTIVE") === "CANCELLED";
+                  const cancelled = (ev.status ?? "ACTIVE") === "CANCELLED";
 
                   return (
                     <EventHoverCard key={ev.id} event={ev} roomName={roomName}>
                       <div
-                        className={`absolute left-1 right-1 rounded-lg border border-opacity-30 text-white p-2 pointer-events-auto shadow-md hover:shadow-lg transition-shadow ${
-                          ev.color || "bg-orange-600"
-                        } ${
-                          isCancelled
+                        className={`
+                          absolute left-1 right-1 rounded-xl p-2 text-white
+                          pointer-events-auto shadow-lg hover:shadow-xl transition-shadow
+                          min-h-[44px] text-sm sm:text-xs
+                          ${ev.color || "bg-blue-600"} ${
+                          cancelled
                             ? "opacity-70 grayscale"
                             : "hover:brightness-110"
-                        } md:p-1.5 md:text-xs`}
+                        }
+                        `}
                         style={{ top, height }}
                       >
                         <div className="flex items-start justify-between gap-1">
-                          <div className="min-w-0 flex-1">
-                            <div className="font-semibold truncate text-sm md:text-xs">
+                          <div className="flex-1 min-w-0">
+                            <div className="font-medium truncate">
                               {ev.title}
                             </div>
-                            <div className="opacity-90 truncate text-xs md:text-[11px] mt-0.5">
+                            <div className="text-xs opacity-90 truncate">
                               {pad2(ev.start.getHours())}:
                               {pad2(ev.start.getMinutes())} –{" "}
                               {pad2(ev.end.getHours())}:
                               {pad2(ev.end.getMinutes())}
                             </div>
-                            {isCancelled && (
-                              <span className="mt-1 hidden md:inline rounded bg-black/30 px-1.5 py-0.5 text-[10px] uppercase">
+                            {cancelled && (
+                              <span className="mt-1 hidden sm:inline-block rounded bg-black/30 px-1.5 py-0.5 text-[10px] uppercase">
                                 Annulé
                               </span>
                             )}
@@ -333,26 +343,26 @@ export default function Scheduler({
                                     menuOpenId === ev.id ? null : ev.id
                                   );
                                 }}
-                                className="pointer-events-auto rounded p-1.5 hover:bg-black/20 transition-colors"
-                                aria-label="Actions de l'événement"
+                                className="p-2 rounded-full hover:bg-white/20 transition-colors"
+                                aria-label="Actions"
                               >
-                                <MoreHorizontal className="w-5 h-5 md:w-4 md:h-4" />
+                                <MoreHorizontal className="w-5 h-5" />
                               </button>
 
                               {menuOpenId === ev.id && (
                                 <div
                                   data-event-menu={ev.id}
-                                  className="absolute right-0 z-50 mt-1 w-36 rounded-lg border border-border bg-white dark:bg-slate-900 p-2 text-xs text-foreground shadow-2xl"
+                                  className="absolute right-0 z-50 mt-1 w-40 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-1 text-sm shadow-2xl"
                                   onClick={(e) => e.stopPropagation()}
                                 >
-                                  {isCancelled ? (
+                                  {cancelled ? (
                                     <button
                                       onClick={() => {
                                         restore(ev.id);
                                         setMenuOpenId(null);
                                       }}
                                       disabled={isLoading(ev.id)}
-                                      className="block w-full rounded px-3 py-1.5 text-left text-blue-900 hover:bg-muted/50 disabled:opacity-50 transition-colors"
+                                      className="block w-full rounded px-3 py-1.5 text-left text-blue-600 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50"
                                     >
                                       {isLoading(ev.id)
                                         ? "Restauration…"
@@ -365,14 +375,13 @@ export default function Scheduler({
                                         setMenuOpenId(null);
                                       }}
                                       disabled={isLoading(ev.id)}
-                                      className="block w-full rounded px-3 py-1.5 text-left text-blue-900 hover:bg-muted/50 disabled:opacity-50 transition-colors"
+                                      className="block w-full rounded px-3 py-1.5 text-left text-blue-600 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50"
                                     >
                                       {isLoading(ev.id)
                                         ? "Annulation…"
                                         : "Annuler"}
                                     </button>
                                   )}
-
                                   <button
                                     onClick={() => {
                                       if (
@@ -385,7 +394,7 @@ export default function Scheduler({
                                       }
                                     }}
                                     disabled={isLoading(ev.id)}
-                                    className="mt-1 block w-full rounded px-3 py-1.5 text-left text-red-600 hover:bg-red-100 dark:hover:bg-red-900/50 disabled:opacity-50 transition-colors"
+                                    className="mt-1 block w-full rounded px-3 py-1.5 text-left text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 disabled:opacity-50"
                                   >
                                     {isLoading(ev.id)
                                       ? "Suppression…"
