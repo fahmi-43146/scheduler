@@ -116,6 +116,7 @@ export default function Scheduler({
 
   useEffect(() => setMenuOpenId(null), [weekStartKey]);
 
+  // Click outside & Escape
   useEffect(() => {
     if (!menuOpenId) return;
     const clickOut = (e: MouseEvent) => {
@@ -135,18 +136,17 @@ export default function Scheduler({
     };
   }, [menuOpenId]);
 
-  const handleLongPress = (evId: string) => {
-    if (!isAdmin) return;
-    setMenuOpenId(menuOpenId === evId ? null : evId);
-  };
+  // Long press for admin menu (mobile)
   const startLongPress = (evId: string) => {
+    if (!isAdmin) return;
     if (longPressTimer.current) clearTimeout(longPressTimer.current);
-    longPressTimer.current = setTimeout(() => handleLongPress(evId), 500);
+    longPressTimer.current = setTimeout(() => setMenuOpenId(evId), 500);
   };
   const cancelLongPress = () => {
     if (longPressTimer.current) clearTimeout(longPressTimer.current);
   };
 
+  // Pinch-to-zoom disable
   useEffect(() => {
     const preventZoom = (e: TouchEvent) => {
       if (e.touches.length > 1) e.preventDefault();
@@ -156,7 +156,8 @@ export default function Scheduler({
   }, []);
 
   return (
-    <div className="rounded-2xl overflow-hidden bg-white dark:bg-gray-950 shadow-xl touch-none">
+    <div className="rounded-2xl overflow-hidden bg-white dark:bg-gray-950 shadow-xl">
+      {/* HEADER */}
       <div className="sticky top-0 z-30 bg-white dark:bg-gray-950">
         <header className="flex flex-col xs:flex-row items-center justify-between border-b border-gray-200 dark:border-gray-800 px-4 py-3 gap-3">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
@@ -192,6 +193,7 @@ export default function Scheduler({
         </header>
       </div>
 
+      {/* GRID */}
       <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600">
         <div
           className="grid grid-cols-[72px_repeat(7,minmax(120px,1fr))] md:grid-cols-[88px_repeat(7,minmax(140px,1fr))]"
@@ -266,18 +268,19 @@ export default function Scheduler({
             <div
               key={dayIdx}
               className={`
-                bg-white dark:bg-gray-950 border-l border-gray-200 dark:border-gray-800
+                relative bg-white dark:bg-gray-950 border-l border-gray-200 dark:border-gray-800
                 ${dayIdx >= 5 ? "opacity-75" : ""}
                 ${isToday(d) ? "bg-blue-50/20 dark:bg-blue-900/20" : ""}
               `}
               style={{ gridRow: "2 / -1", height: gridHeightPx }}
             >
+              {/* SLOTS */}
               {Array.from({ length: endHour - startHour }, (_, i) => {
                 const hasEvent = (eventsByDay.get(dayIdx) || []).some((ev) => {
                   const hourStart = new Date(d);
                   hourStart.setHours(startHour + i, 0, 0, 0);
                   const hourEnd = new Date(hourStart);
-                  hourEnd.setMinutes(hourEnd.getMinutes() + 60);
+                  hourEnd.setMinutes(60);
                   return ev.start < hourEnd && ev.end > hourStart;
                 });
 
@@ -303,6 +306,7 @@ export default function Scheduler({
                 );
               })}
 
+              {/* CURRENT TIME */}
               {isCurrentWeek && sameDay(d, new Date()) && nowY !== null && (
                 <div
                   className="absolute inset-x-0 h-0.5 bg-red-500 shadow-sm z-20"
@@ -310,6 +314,7 @@ export default function Scheduler({
                 />
               )}
 
+              {/* EVENTS — YOUR ORIGINAL STRUCTURE */}
               <div className="absolute inset-0 pointer-events-none">
                 {(eventsByDay.get(dayIdx) || []).map((ev) => {
                   const startY = minsSince(ev.start, startHour) * pxPerMinute;
@@ -332,54 +337,50 @@ export default function Scheduler({
                       onMouseUp={cancelLongPress}
                       onMouseLeave={cancelLongPress}
                     >
-                      <div className="relative h-full">
-                        <EventHoverCard event={ev} roomName={roomName}>
-                          <div
-                            className={`
-                              h-full rounded-xl p-2 text-white shadow-lg hover:shadow-xl transition-shadow
-                              min-h-[44px] text-sm sm:text-xs flex flex-col justify-between cursor-pointer
-                              ${ev.color || "bg-blue-600"} ${
-                              cancelled
-                                ? "opacity-70 grayscale"
-                                : "hover:brightness-110"
-                            }
-                            `}
-                          >
-                            <div className="flex-1 min-w-0">
-                              <div className="font-medium truncate">
-                                {ev.title}
-                              </div>
-                              <div className="text-xs opacity-90 truncate">
-                                {pad2(ev.start.getHours())}:
-                                {pad2(ev.start.getMinutes())} –{" "}
-                                {pad2(ev.end.getHours())}:
-                                {pad2(ev.end.getMinutes())}
-                              </div>
+                      <EventHoverCard event={ev} roomName={roomName}>
+                        <div
+                          className={`
+                            h-full rounded-xl p-2 text-white shadow-lg hover:shadow-xl transition-shadow
+                            min-h-[44px] text-sm sm:text-xs flex flex-col justify-between cursor-pointer
+                            ${ev.color || "bg-blue-600"} ${
+                            cancelled
+                              ? "opacity-70 grayscale"
+                              : "hover:brightness-110"
+                          }
+                          `}
+                        >
+                          <div className="flex-1 min-w-0">
+                            <div className="font-medium truncate">
+                              {ev.title}
+                            </div>
+                            <div className="text-xs opacity-90 truncate">
+                              {pad2(ev.start.getHours())}:
+                              {pad2(ev.start.getMinutes())} –{" "}
+                              {pad2(ev.end.getHours())}:
+                              {pad2(ev.end.getMinutes())}
                             </div>
                           </div>
-                        </EventHoverCard>
+                        </div>
+                      </EventHoverCard>
 
-                        {cancelled && (
-                          <span className="absolute top-1 left-1 inline-block rounded bg-red-600/90 px-1.5 py-0.5 text-[9px] font-bold uppercase text-white shadow-sm z-10">
-                            Annulé
-                          </span>
-                        )}
+                      {cancelled && (
+                        <span className="absolute top-1 left-1 inline-block rounded bg-red-600/90 px-1.5 py-0.5 text-[9px] font-bold uppercase text-white shadow-sm z-10">
+                          Annulé
+                        </span>
+                      )}
 
-                        {isAdmin && (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setMenuOpenId(
-                                menuOpenId === ev.id ? null : ev.id
-                              );
-                            }}
-                            className="absolute top-1 right-1 p-1.5 rounded-full bg-white/20 hover:bg-white/30 transition-colors z-10"
-                            aria-label="Actions"
-                          >
-                            <MoreHorizontal className="w-4 h-4 text-white" />
-                          </button>
-                        )}
-                      </div>
+                      {isAdmin && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setMenuOpenId(menuOpenId === ev.id ? null : ev.id);
+                          }}
+                          className="absolute top-1 right-1 p-1.5 rounded-full bg-white/20 hover:bg-white/30 transition-colors z-10"
+                          aria-label="Actions"
+                        >
+                          <MoreHorizontal className="w-4 h-4 text-white" />
+                        </button>
+                      )}
 
                       {isAdmin && menuOpenId === ev.id && (
                         <div
