@@ -61,7 +61,7 @@ export default function EventHoverCard({
         side="top"
         align="center"
         sideOffset={8}
-        className="w-64 p-4 z-50 bg-[var(--card)] text-[var(--popover-foreground)] border-[var(--border)] shadow-xl rounded-lg
+        className="w-72 p-4 z-50 bg-[var(--card)] text-[var(--popover-foreground)] border-[var(--border)] shadow-xl rounded-lg
           data-[state=open]:animate-in data-[state=closed]:animate-out
           data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0
           data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95
@@ -69,12 +69,13 @@ export default function EventHoverCard({
       >
         <div className="space-y-4">
           <div className="space-y-3">
+            {/* Organisateur */}
             {event.organizerName && (
               <div className="flex items-center gap-3 text-sm">
                 <User className="w-4 h-4 text-primary flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p className="text-muted-foreground text-xs uppercase tracking-wide">
-                    Organizer
+                    Organisateur
                   </p>
                   <p className="font-semibold text-foreground truncate">
                     {event.organizerName}
@@ -83,6 +84,7 @@ export default function EventHoverCard({
               </div>
             )}
 
+            {/* Description */}
             {event.description && (
               <div className="pt-3 border-t border-border/30">
                 <p className="text-xs text-muted-foreground leading-relaxed">
@@ -91,21 +93,23 @@ export default function EventHoverCard({
               </div>
             )}
 
+            {/* Salle */}
             <div className="flex items-center gap-3 text-sm">
               <MapPin className="w-4 h-4 text-primary flex-shrink-0" />
               <div>
                 <p className="text-muted-foreground text-xs uppercase tracking-wide">
-                  Room
+                  Salle
                 </p>
                 <p className="font-semibold text-foreground">{roomName}</p>
               </div>
             </div>
 
+            {/* Horaire */}
             <div className="flex items-center gap-3 text-sm">
               <Clock className="w-4 h-4 text-primary flex-shrink-0" />
               <div>
                 <p className="text-muted-foreground text-xs uppercase tracking-wide">
-                  Time
+                  Horaire
                 </p>
                 <p className="font-semibold text-foreground">
                   {formatTimeRange(event.start, event.end)}
@@ -114,17 +118,23 @@ export default function EventHoverCard({
             </div>
           </div>
 
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-semibold">
-                <Tag className="w-3 h-3" />
-                {event.type}
-                {event.type === "OTHER" && event.typeOtherName && (
-                  <span className="text-primary/70">
-                    – {event.typeOtherName}
-                  </span>
+          {/* Type d'événement – PRO handling of long text */}
+          <div className="pt-3 border-t border-border/30">
+            <div className="inline-flex flex-wrap items-center gap-2 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-xs font-semibold max-w-full">
+              <Tag className="w-3.5 h-3.5 flex-shrink-0" />
+              <span className="truncate">
+                {event.type === "PHD" && "Mastère"}
+                {event.type === "THESIS" && "Thèse"}
+                {event.type === "OTHER" && (
+                  <>
+                    {event.typeOtherName ? (
+                      <span className="break-words">{event.typeOtherName}</span>
+                    ) : (
+                      "Autre"
+                    )}
+                  </>
                 )}
-              </div>
+              </span>
             </div>
           </div>
         </div>
