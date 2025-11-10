@@ -23,21 +23,21 @@ export default function SignInPage() {
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" }, // backend expects JSON
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
-        credentials: "include", // httpOnly token cookie set by server
+        credentials: "include",
       });
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data?.error || `Sign in failed (${res.status})`);
+        throw new Error(data?.error || `Connexion échouée (${res.status})`);
       }
       window.location.href = "/";
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("Something went wrong");
+        setError("Une erreur est survenue");
       }
     } finally {
       setPending(false);
@@ -51,13 +51,13 @@ export default function SignInPage() {
           Se connecter
         </h1>
 
-        {/* Google FIRST and very visible */}
+        {/* Google FIRST */}
         <a
           href="/api/auth/google"
-          className=" w-full h-12 rounded-md border border-slate-300 dark:border-slate-700 flex items-center justify-center gap-2 text-slate-800 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800 transition mb-5"
-          aria-label="Continue with Google"
+          className="w-full h-12 rounded-md border border-slate-300 dark:border-slate-700 flex items-center justify-center gap-2 text-slate-800 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800 transition mb-5"
+          aria-label="Se connecter avec Google"
         >
-          <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden>
+          <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
             <path
               fill="#FFC107"
               d="M43.6 20.5H42V20H24v8h11.3C33.4 31.7 29.1 35 24 35c-6.1 0-11-4.9-11-11s4.9-11 11-11c2.8 0 5.4 1.1 7.4 2.9l5.7-5.7C33.5 7.1 28.9 5 24 5 12.9 5 4 13.9 4 25s8.9 20 20 20 19.5-9 19.5-20c0-1.5-.1-2.6-.3-4.5z"
@@ -84,12 +84,12 @@ export default function SignInPage() {
           </div>
           <div className="relative flex justify-center">
             <span className="bg-white dark:bg-slate-900 px-2 text-xs text-slate-500">
-              or
+              ou
             </span>
           </div>
         </div>
 
-        {/* Email/password — handled via fetch */}
+        {/* Email / Mot de passe */}
         <form onSubmit={onSubmit} className="space-y-3">
           <div className="space-y-1">
             <label
@@ -104,6 +104,7 @@ export default function SignInPage() {
               type="email"
               required
               className="h-12 w-full rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 text-slate-900 dark:text-slate-100"
+              placeholder="votre@email.com"
             />
           </div>
 
@@ -126,16 +127,16 @@ export default function SignInPage() {
           <button
             type="submit"
             disabled={pending}
-            className="w-full h-12 rounded-md bg-linear-to-r from-orange-500 to-red-500 text-white font-semibold hover:from-orange-600 hover:to-red-600 transition"
+            className="w-full h-12 rounded-md bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold hover:from-orange-600 hover:to-red-600 transition"
           >
-            {pending ? "Signing in…" : "Sign in"}
+            {pending ? "Connexion en cours…" : "Se connecter"}
           </button>
 
           {error && <p className="text-sm text-red-600 mt-2">{error}</p>}
         </form>
 
         <p className="mt-4 text-center text-sm text-slate-600 dark:text-slate-400">
-          Vous n'avez pas de compte ??{" "}
+          Vous n&#39;avez pas de compte&nbsp;?{" "}
           <Link
             href="/signup"
             className="text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300 font-medium"

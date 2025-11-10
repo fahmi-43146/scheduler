@@ -15,10 +15,10 @@ export type NewEvent = {
 };
 
 const COLORS = [
-  { value: "bg-blue-600", label: "Blue" },
-  { value: "bg-emerald-600", label: "Green" },
-  { value: "bg-amber-600", label: "Yellow" },
-  { value: "bg-fuchsia-600", label: "Pink" },
+  { value: "bg-blue-600", label: "Bleu" },
+  { value: "bg-emerald-600", label: "Vert" },
+  { value: "bg-amber-600", label: "Jaune" },
+  { value: "bg-fuchsia-600", label: "Rose" },
   { value: "bg-cyan-600", label: "Cyan" },
 ];
 
@@ -63,9 +63,11 @@ export default function EventForm({
   return (
     <div className="max-h-[78vh] overflow-y-auto px-1 sm:px-0">
       <form className="space-y-3" onSubmit={handleSubmit}>
-        {/* Title */}
+        {/* Titre */}
         <div>
-          <label className="text-sm font-medium text-foreground">Title</label>
+          <label className="text-sm font-medium text-foreground">
+            Titre de l&#39;événement
+          </label>
           <input
             type="text"
             required
@@ -73,15 +75,15 @@ export default function EventForm({
             onChange={(e) => update("title", e.target.value)}
             className="mt-1 w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm
                        focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-            placeholder="Event title"
+            placeholder="Ex : Soutenance de thèse"
           />
         </div>
 
-        {/* Event Type */}
+        {/* Type d'événement */}
         <div>
           <label className="flex items-center gap-1.5 text-sm font-medium text-foreground">
             <GraduationCap className="h-3.5 w-3.5" />
-            Type
+            Type d&#39;événement
           </label>
           <div className="mt-1.5 space-y-1.5">
             {EVENT_TYPES.map((t) => (
@@ -122,7 +124,7 @@ export default function EventForm({
           )}
         </div>
 
-        {/* Date & Time - Compact Grid */}
+        {/* Date & Heure */}
         <div className="grid grid-cols-3 gap-2 text-sm">
           <div>
             <label className="flex items-center gap-1 text-xs font-medium text-foreground">
@@ -162,7 +164,7 @@ export default function EventForm({
           </div>
         </div>
 
-        {/* Color Picker */}
+        {/* Couleur */}
         <div>
           <label className="flex items-center gap-1.5 text-sm font-medium text-foreground">
             <Palette className="h-3.5 w-3.5" />
@@ -188,7 +190,7 @@ export default function EventForm({
           </div>
         </div>
 
-        {/* Sticky Buttons */}
+        {/* Boutons */}
         <div className="sticky bottom-0 -mx-1 bg-[var(--card)] px-1 pt-2 pb-3 shadow-[0_-8px_16px_-12px_rgba(0,0,0,0.3)]">
           <div className="flex justify-end gap-2">
             <button
@@ -202,7 +204,7 @@ export default function EventForm({
               type="submit"
               className="px-3 py-1.5 rounded-md bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium"
             >
-              Ajouter
+              Ajouter l&#39;événement
             </button>
           </div>
         </div>

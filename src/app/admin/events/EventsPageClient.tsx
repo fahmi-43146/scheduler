@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { useAdminEventActions } from "@/hooks/useAdminEventActions";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 
 export type AdminEventRow = {
   id: string;
@@ -37,12 +38,12 @@ export default function EventsPageClient({
   };
 
   useEffect(() => {
-    if (error) toast.error("Couldn’t load events", { description: error });
+    if (error)
+      toast.error("Impossible de charger les événements", {
+        description: error,
+      });
   }, [error]);
 
-  /* ---------------------------------------------------------- */
-  /* Helper components – shared between mobile & desktop */
-  /* ---------------------------------------------------------- */
   const StatusBadge = ({ status }: { status: "ACTIVE" | "CANCELLED" }) => (
     <span
       className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
@@ -51,7 +52,7 @@ export default function EventsPageClient({
           : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300"
       }`}
     >
-      {status}
+      {status === "ACTIVE" ? "Actif" : "Annulé"}
     </span>
   );
 
@@ -89,13 +90,12 @@ export default function EventsPageClient({
     const s = new Date(start);
     const e = new Date(end);
     const sameDay = s.toDateString() === e.toDateString();
-    const fmt = sameDay ? "HH:mm" : "MMM d, HH:mm";
-    return `${format(s, fmt)} – ${format(e, fmt)}`;
+    const fmt = sameDay ? "HH:mm" : "d MMM, HH:mm";
+    return `${format(s, fmt, { locale: fr })} – ${format(e, fmt, {
+      locale: fr,
+    })}`;
   };
 
-  /* ---------------------------------------------------------- */
-  /* Mobile: Card list ( < sm ) */
-  /* ---------------------------------------------------------- */
   const MobileCards = () => (
     <div className="space-y-3">
       {events.map((e) => (
@@ -103,7 +103,6 @@ export default function EventsPageClient({
           key={e.id}
           className="rounded-lg border border-border bg-card p-3 shadow-sm"
         >
-          {/* Header */}
           <div className="flex items-start justify-between gap-2">
             <h3 className="truncate text-sm font-medium text-foreground">
               {e.title}
@@ -111,23 +110,21 @@ export default function EventsPageClient({
             <StatusBadge status={e.status} />
           </div>
 
-          {/* Details */}
           <div className="mt-2 space-y-1.5 text-xs text-muted-foreground">
             <div>
-              <span className="font-medium">Room:</span>{" "}
+              <span className="font-medium">Salle&nbsp;:</span>{" "}
               {e.room?.name ?? e.roomId}
             </div>
             <div>
-              <span className="font-medium">When:</span>{" "}
+              <span className="font-medium">Quand&nbsp;?</span>{" "}
               {formatWhen(e.startTime, e.endTime)}
             </div>
             <div>
-              <span className="font-medium">Created by:</span>{" "}
+              <span className="font-medium">Créé par&nbsp;:</span>{" "}
               {e.createdBy?.name ?? e.createdBy?.email ?? e.createdById}
             </div>
           </div>
 
-          {/* Actions */}
           <div className="mt-3 flex justify-end">
             <ActionButtons e={e} />
           </div>
@@ -138,28 +135,25 @@ export default function EventsPageClient({
     </div>
   );
 
-  /* ---------------------------------------------------------- */
-  /* Desktop: Compact table ( sm+ ) */
-  /* ---------------------------------------------------------- */
   const DesktopTable = () => (
     <div className="overflow-x-auto rounded-lg border border-border bg-card">
       <table className="w-full min-w-[640px] text-sm">
         <thead>
           <tr className="border-b border-border bg-muted/50">
             <th className="px-3 py-2 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Nom de l'événement
+              Nom de l&#39;événement
             </th>
             <th className="px-3 py-2 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Salle
             </th>
             <th className="px-3 py-2 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Quand ?
+              Quand&nbsp;?
             </th>
             <th className="px-3 py-2 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Statut
             </th>
             <th className="px-3 py-2 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Créé par
+              Créé par&nbsp;:
             </th>
             <th className="px-3 py-2 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Opérations
@@ -193,7 +187,9 @@ export default function EventsPageClient({
                 colSpan={6}
                 className="px-3 py-8 text-center text-sm text-muted-foreground"
               >
-                {error ? "Unable to load events." : "No events found."}
+                {error
+                  ? "Impossible de charger les événements."
+                  : "Aucun événement trouvé."}
               </td>
             </tr>
           )}
@@ -205,14 +201,13 @@ export default function EventsPageClient({
   const EmptyMessage = () => (
     <div className="rounded-lg border border-border bg-card p-6 text-center">
       <p className="text-sm text-muted-foreground">
-        {error ? "Unable to load events." : "No events found."}
+        {error
+          ? "Impossible de charger les événements."
+          : "Aucun événement trouvé."}
       </p>
     </div>
   );
 
-  /* ---------------------------------------------------------- */
-  /* Layout */
-  /* ---------------------------------------------------------- */
   return (
     <div className="min-h-screen bg-background p-4 sm:p-6">
       <div className="mx-auto max-w-4xl">
@@ -220,12 +215,10 @@ export default function EventsPageClient({
           Événements
         </h1>
 
-        {/* Mobile cards */}
         <div className="sm:hidden">
           {events.length > 0 ? <MobileCards /> : <EmptyMessage />}
         </div>
 
-        {/* Desktop table */}
         <div className="hidden sm:block">
           {events.length > 0 ? <DesktopTable /> : <EmptyMessage />}
         </div>

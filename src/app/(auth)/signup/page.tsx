@@ -26,22 +26,22 @@ export default function SignUpPage() {
     try {
       const res = await fetch("/api/auth/signup", {
         method: "POST",
-        headers: { "Content-Type": "application/json" }, // your backend expects JSON
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, name }),
         credentials: "include",
       });
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data?.error || `Signup failed (${res.status})`);
+        throw new Error(data?.error || `Inscription échouée (${res.status})`);
       }
-      // On success, redirect to home page
+      // Succès → redirection
       window.location.href = "/";
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("Something went wrong");
+        setError("Une erreur est survenue");
       }
     } finally {
       setPending(false);
@@ -58,10 +58,10 @@ export default function SignUpPage() {
         {/* Google FIRST */}
         <a
           href="/api/auth/google"
-          className=" w-full h-12 rounded-md border border-slate-300 dark:border-slate-700 flex items-center justify-center gap-2 text-slate-800 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800 transition mb-5"
-          aria-label="Sign up with Google"
+          className="w-full h-12 rounded-md border border-slate-300 dark:border-slate-700 flex items-center justify-center gap-2 text-slate-800 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800 transition mb-5"
+          aria-label="S&#39;inscrire avec Google"
         >
-          <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden>
+          <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
             <path
               fill="#FFC107"
               d="M43.6 20.5H42V20H24v8h11.3C33.4 31.7 29.1 35 24 35c-6.1 0-11-4.9-11-11s4.9-11 11-11c2.8 0 5.4 1.1 7.4 2.9l5.7-5.7C33.5 7.1 28.9 5 24 5 12.9 5 4 13.9 4 25s8.9 20 20 20 19.5-9 19.5-20c0-1.5-.1-2.6-.3-4.5z"
@@ -79,7 +79,7 @@ export default function SignUpPage() {
               d="M43.6 20.5H42V20H24v8h11.3c-1.3 3.9-5.1 7-9.3 7-5 0-9.3-3.3-10.8-7.8l-6.7 5.2C9.7 39.9 16.3 45 24 45c9.4 0 18.5-6.9 18.5-20 0-1.5-.1-2.6-.3-4.5z"
             />
           </svg>
-          <span className="font-medium">Se connecter avec Google</span>
+          <span className="font-medium">S&#39;inscrire avec Google</span>
         </a>
 
         <div className="relative my-4">
@@ -88,12 +88,12 @@ export default function SignUpPage() {
           </div>
           <div className="relative flex justify-center">
             <span className="bg-white dark:bg-slate-900 px-2 text-xs text-slate-500">
-              or
+              ou
             </span>
           </div>
         </div>
 
-        {/* Email signup — now handled via fetch */}
+        {/* Formulaire d’inscription */}
         <form onSubmit={onSubmit} className="space-y-3">
           <div className="space-y-1">
             <label
@@ -108,6 +108,7 @@ export default function SignUpPage() {
               type="text"
               required
               className="h-12 w-full rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 text-slate-900 dark:text-slate-100"
+              placeholder="Jean Dupont"
             />
           </div>
 
@@ -124,6 +125,7 @@ export default function SignUpPage() {
               type="email"
               required
               className="h-12 w-full rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 text-slate-900 dark:text-slate-100"
+              placeholder="jean.dupont@univ-tunis.tn"
             />
           </div>
 
@@ -139,6 +141,7 @@ export default function SignUpPage() {
               name="password"
               type="password"
               required
+              minLength={8}
               className="h-12 w-full rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 text-slate-900 dark:text-slate-100"
             />
           </div>
@@ -146,16 +149,16 @@ export default function SignUpPage() {
           <button
             type="submit"
             disabled={pending}
-            className="w-full h-12 rounded-md bg-linear-to-r from-orange-500 to-red-500 text-white font-semibold hover:from-orange-600 hover:to-red-600 transition"
+            className="w-full h-12 rounded-md bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold hover:from-orange-600 hover:to-red-600 transition"
           >
-            {pending ? "Creating…" : "Create account"}
+            {pending ? "Création en cours…" : "Créer mon compte"}
           </button>
 
           {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
         </form>
 
         <p className="mt-4 text-center text-sm text-slate-600 dark:text-slate-400">
-          Déjà un compte ?{" "}
+          Déjà un compte&nbsp;?{" "}
           <Link
             href="/signin"
             className="text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300 font-medium"

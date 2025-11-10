@@ -1,4 +1,4 @@
-// app/admin/users/page.tsx   (or wherever it lives)
+// app/admin/users/page.tsx
 import Link from "next/link";
 import ActionsClient, { type AdminUser } from "./ActionsClient";
 import { headers, cookies } from "next/headers";
@@ -34,10 +34,10 @@ export default async function AdminUsersPage() {
   });
 
   // ──────────────────────────────────────────────────────────────
-  // Error UI (unchanged, just tighter on mobile)
+  // ERREUR
   // ──────────────────────────────────────────────────────────────
   if (!res.ok) {
-    let msg = "Failed to load users";
+    let msg = "Impossible de charger les utilisateurs";
     try {
       const data = (await res.json()) as { error?: string };
       if (data?.error) msg = data.error;
@@ -61,7 +61,7 @@ export default async function AdminUsersPage() {
               href="/"
               className="text-sm font-medium text-primary hover:underline"
             >
-              ← Retour à l'accueil
+              Retour à l&#39;accueil
             </Link>
           </div>
         </div>
@@ -72,21 +72,21 @@ export default async function AdminUsersPage() {
   const { users } = (await res.json()) as UsersResponse;
 
   // ──────────────────────────────────────────────────────────────
-  // SUCCESS UI – RESPONSIVE CARD LIST
+  // SUCCÈS – UI RESPONSIVE
   // ──────────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-background p-4 sm:p-6">
       <div className="mx-auto max-w-3xl">
         <div className="mb-6">
           <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            Users Management
+            Gestion des utilisateurs
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Manage and moderate user accounts
+            Gérer et modérer les comptes utilisateurs
           </p>
         </div>
 
-        {/* Mobile: Card list | Desktop: Compact table */}
+        {/* Mobile : cartes */}
         <div className="space-y-4 sm:hidden">
           {users.map((u) => (
             <UserCard key={u.id} user={u} />
@@ -94,7 +94,7 @@ export default async function AdminUsersPage() {
           {users.length === 0 && <EmptyCard />}
         </div>
 
-        {/* Desktop: Table (still responsive, no horizontal scroll) */}
+        {/* Desktop : tableau */}
         <div className="hidden sm:block overflow-x-auto rounded-lg border border-border bg-card">
           <table className="w-full min-w-[640px]">
             <thead>
@@ -123,13 +123,13 @@ export default async function AdminUsersPage() {
                     {u.email}
                   </td>
                   <td className="px-4 py-3 text-sm text-foreground">
-                    {u.name ?? "-"}
+                    {u.name ?? "—"}
                   </td>
                   <td className="px-4 py-3">
                     <StatusBadge status={u.status} />
                   </td>
                   <td className="px-4 py-3 text-sm text-foreground">
-                    {u.deletedAt ? "Yes" : "No"}
+                    {u.deletedAt ? "Oui" : "Non"}
                   </td>
                   <td className="px-4 py-3 text-sm">
                     <Actions user={u} />
@@ -142,7 +142,7 @@ export default async function AdminUsersPage() {
                     colSpan={5}
                     className="px-4 py-10 text-center text-sm text-muted-foreground"
                   >
-                    No users yet.
+                    Aucun utilisateur pour le moment.
                   </td>
                 </tr>
               )}
@@ -155,7 +155,7 @@ export default async function AdminUsersPage() {
             href="/"
             className="text-sm font-medium text-primary hover:underline"
           >
-            ← Back to Home
+            Retour à l&#39;accueil
           </Link>
         </div>
       </div>
@@ -164,7 +164,7 @@ export default async function AdminUsersPage() {
 }
 
 // ──────────────────────────────────────────────────────────────
-// Reusable components
+// COMPOSANTS RÉUTILISABLES
 // ──────────────────────────────────────────────────────────────
 function StatusBadge({ status }: { status: AdminStatus }) {
   const colors = {
@@ -174,11 +174,16 @@ function StatusBadge({ status }: { status: AdminStatus }) {
     PENDING:
       "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
   };
+  const labels = {
+    APPROVED: "Approuvé",
+    SUSPENDED: "Suspendu",
+    PENDING: "En attente",
+  };
   return (
     <span
       className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${colors[status]}`}
     >
-      {status}
+      {labels[status]}
     </span>
   );
 }
@@ -199,7 +204,7 @@ function UserCard({ user }: { user: AdminUserRow }) {
       </div>
 
       <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
-        <span>Deleted: {user.deletedAt ? "Yes" : "No"}</span>
+        <span>Supprimé&nbsp;: {user.deletedAt ? "Oui" : "Non"}</span>
         <div className="flex-shrink-0">
           <Actions user={user} />
         </div>
@@ -211,7 +216,9 @@ function UserCard({ user }: { user: AdminUserRow }) {
 function EmptyCard() {
   return (
     <div className="rounded-lg border border-border bg-card p-8 text-center">
-      <p className="text-sm text-muted-foreground">No users yet.</p>
+      <p className="text-sm text-muted-foreground">
+        Aucun utilisateur pour le moment.
+      </p>
     </div>
   );
 }
