@@ -19,12 +19,12 @@ export default function ActionsClient({ user }: Props) {
 
   const successText = (action: AdminAction) =>
     action === "approve"
-      ? "User approved."
+      ? "Utilisateur approuvé."
       : action === "reject"
-      ? "User rejected (set to SUSPENDED)."
+      ? "Utilisateur refusé (passé en SUSPENDU)."
       : action === "soft-delete"
-      ? "User soft-deleted."
-      : "User restored and approved.";
+      ? "Utilisateur supprimé temporairement."
+      : "Utilisateur restauré et approuvé.";
 
   async function callAction(action: AdminAction, body?: unknown) {
     setLoading(action);
@@ -38,7 +38,7 @@ export default function ActionsClient({ user }: Props) {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({} as { error?: string }));
-        throw new Error(data?.error ?? `Request failed (${res.status})`);
+        throw new Error(data?.error ?? `Échec de la requête (${res.status})`);
       }
 
       router.refresh();
@@ -47,9 +47,9 @@ export default function ActionsClient({ user }: Props) {
     const promise = run();
 
     toast.promise(promise, {
-      loading: "Working…",
+      loading: "Traitement en cours…",
       success: successText(action),
-      error: (err) => err.message || "Action failed",
+      error: (err) => err.message || "L'action a échoué",
     });
 
     promise.finally(() => setLoading(null));
@@ -63,16 +63,18 @@ export default function ActionsClient({ user }: Props) {
         className="inline-flex items-center rounded-md bg-green-600 px-3 py-2 text-xs font-medium text-white transition-all hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
         aria-busy={loading === "approve"}
       >
-        {loading === "approve" ? "Approving…" : "Approve"}
+        {loading === "approve" ? "Approbation…" : "Approuver"}
       </button>
 
       <button
-        onClick={() => callAction("reject", { reason: "Not meeting criteria" })}
+        onClick={() =>
+          callAction("reject", { reason: "Ne répond pas aux critères" })
+        }
         disabled={loading !== null}
         className="inline-flex items-center rounded-md bg-yellow-600 px-3 py-2 text-xs font-medium text-white transition-all hover:bg-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed"
         aria-busy={loading === "reject"}
       >
-        {loading === "reject" ? "Rejecting…" : "Reject"}
+        {loading === "reject" ? "Refus…" : "Refuser"}
       </button>
 
       {!user.deletedAt ? (
@@ -82,7 +84,7 @@ export default function ActionsClient({ user }: Props) {
           className="inline-flex items-center rounded-md bg-red-600 px-3 py-2 text-xs font-medium text-white transition-all hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
           aria-busy={loading === "soft-delete"}
         >
-          {loading === "soft-delete" ? "Deleting…" : "Delete"}
+          {loading === "soft-delete" ? "Suppression…" : "Supprimer"}
         </button>
       ) : (
         <button
@@ -91,7 +93,7 @@ export default function ActionsClient({ user }: Props) {
           className="inline-flex items-center rounded-md bg-blue-600 px-3 py-2 text-xs font-medium text-white transition-all hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           aria-busy={loading === "restore"}
         >
-          {loading === "restore" ? "Restoring…" : "Restore"}
+          {loading === "restore" ? "Restauration…" : "Restaurer"}
         </button>
       )}
     </div>

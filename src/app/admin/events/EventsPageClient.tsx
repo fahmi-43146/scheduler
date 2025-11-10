@@ -63,7 +63,7 @@ export default function EventsPageClient({
           disabled={isLoading(e.id)}
           className="rounded bg-yellow-600 px-2 py-1 text-xs text-white disabled:opacity-50"
         >
-          {isLoading(e.id) ? "…" : "Cancel"}
+          {isLoading(e.id) ? "…" : "Annuler"}
         </button>
       ) : (
         <button
@@ -71,7 +71,7 @@ export default function EventsPageClient({
           disabled={isLoading(e.id)}
           className="rounded bg-blue-600 px-2 py-1 text-xs text-white disabled:opacity-50"
         >
-          {isLoading(e.id) ? "…" : "Restore"}
+          {isLoading(e.id) ? "…" : "Restaurer"}
         </button>
       )}
 
@@ -80,7 +80,7 @@ export default function EventsPageClient({
         disabled={isLoading(e.id)}
         className="rounded bg-red-600 px-2 py-1 text-xs text-white disabled:opacity-50"
       >
-        {isLoading(e.id) ? "…" : "Delete"}
+        {isLoading(e.id) ? "…" : "Supprimer"}
       </button>
     </div>
   );
@@ -147,22 +147,22 @@ export default function EventsPageClient({
         <thead>
           <tr className="border-b border-border bg-muted/50">
             <th className="px-3 py-2 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Title
+              Nom de l'événement
             </th>
             <th className="px-3 py-2 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Room
+              Salle
             </th>
             <th className="px-3 py-2 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              When
+              Quand ?
             </th>
             <th className="px-3 py-2 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Status
+              Statut
             </th>
             <th className="px-3 py-2 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Created by
+              Créé par
             </th>
             <th className="px-3 py-2 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Actions
+              Opérations
             </th>
           </tr>
         </thead>
@@ -217,7 +217,7 @@ export default function EventsPageClient({
     <div className="min-h-screen bg-background p-4 sm:p-6">
       <div className="mx-auto max-w-4xl">
         <h1 className="mb-5 text-2xl font-bold tracking-tight text-foreground">
-          Events
+          Événements
         </h1>
 
         {/* Mobile cards */}

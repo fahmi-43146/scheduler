@@ -50,9 +50,6 @@ export default async function Header() {
         <div className="flex h-16 items-center justify-between">
           {/* ---------- BRAND (left) ---------- */}
           <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-lg">
-              UT
-            </div>
             <span className="hidden sm:inline text-lg font-semibold text-foreground">
               Université de Tunis
             </span>
@@ -65,12 +62,13 @@ export default async function Header() {
           <div className="hidden md:flex flex-1 items-center justify-center gap-3">
             <NavLink href="/dashboard">Tableau de bord</NavLink>
             <NavLink href="/about">À propos</NavLink>
+            <NavLink href="/">Planificateur</NavLink>
 
             {/* ADMIN LINKS – no dropdown, same style as other links */}
             {isAdmin && (
               <>
-                <NavLink href="/admin/events">Events</NavLink>
-                <NavLink href="/admin/users">Users</NavLink>
+                <NavLink href="/admin/events">Événements</NavLink>
+                <NavLink href="/admin/users">Utilisateurs</NavLink>
               </>
             )}
           </div>
@@ -79,7 +77,7 @@ export default async function Header() {
           <div className="flex items-center gap-3">
             {!me ? (
               <Link
-                href="/signup"
+                href="/signin"
                 className="inline-flex items-center rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:bg-primary/90 transition-colors"
               >
                 Se connecter

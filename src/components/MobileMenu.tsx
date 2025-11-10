@@ -87,11 +87,14 @@ export default function MobileMenu({ isAdmin, me }: MobileMenuProps) {
         <div className="absolute right-0 top-full mt-2 w-56 rounded-lg border border-border  bg-white dark:bg-gray-900 text-slate-900 dark:text-slate-200 shadow-2xl z-50">
           <div className="p-3 space-y-1">
             <NavLink href="/dashboard" onClose={close}>
-              Dashboard
+              Mon espace
             </NavLink>
 
             <NavLink href="/about" onClose={close}>
-              About
+              À propos
+            </NavLink>
+            <NavLink href="/" onClose={close}>
+              Planificateur
             </NavLink>
 
             {/* ---------- ADMIN LINKS (no dropdown) ---------- */}
@@ -127,7 +130,7 @@ export default function MobileMenu({ isAdmin, me }: MobileMenuProps) {
                 </form>
               ) : (
                 <NavLink href="/signin" onClose={close}>
-                  Sign In
+                  Se connecter
                 </NavLink>
               )}
             </div>

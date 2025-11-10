@@ -52,7 +52,7 @@ export default function SignUpPage() {
     <div className="min-h-screen bg-white dark:bg-slate-900 grid place-items-center p-4">
       <div className="w-full max-w-sm">
         <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-6">
-          Create account
+          Créer un compte
         </h1>
 
         {/* Google FIRST */}
@@ -79,7 +79,7 @@ export default function SignUpPage() {
               d="M43.6 20.5H42V20H24v8h11.3c-1.3 3.9-5.1 7-9.3 7-5 0-9.3-3.3-10.8-7.8l-6.7 5.2C9.7 39.9 16.3 45 24 45c9.4 0 18.5-6.9 18.5-20 0-1.5-.1-2.6-.3-4.5z"
             />
           </svg>
-          <span className="font-medium">Continue with Google</span>
+          <span className="font-medium">Se connecter avec Google</span>
         </a>
 
         <div className="relative my-4">
@@ -100,7 +100,7 @@ export default function SignUpPage() {
               htmlFor="name"
               className="text-sm font-medium text-slate-800 dark:text-slate-100"
             >
-              Full name
+              Prénom et nom
             </label>
             <input
               id="name"
@@ -132,7 +132,7 @@ export default function SignUpPage() {
               htmlFor="password"
               className="text-sm font-medium text-slate-800 dark:text-slate-100"
             >
-              Password
+              Mot de passe
             </label>
             <input
               id="password"
@@ -155,12 +155,12 @@ export default function SignUpPage() {
         </form>
 
         <p className="mt-4 text-center text-sm text-slate-600 dark:text-slate-400">
-          Already have an account?{" "}
+          Déjà un compte ?{" "}
           <Link
             href="/signin"
             className="text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300 font-medium"
           >
-            Sign in
+            Se connecter
           </Link>
         </p>
       </div>

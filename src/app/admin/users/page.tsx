@@ -46,10 +46,10 @@ export default async function AdminUsersPage() {
       <div className="min-h-screen bg-background p-4 sm:p-6">
         <div className="mx-auto max-w-3xl">
           <h1 className="text-2xl font-bold text-foreground">
-            Users Management
+            Gestion des utilisateurs
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Manage and moderate user accounts
+            Gérer et modérer les comptes utilisateurs
           </p>
 
           <div className="mt-6 rounded-lg border border-destructive/20 bg-destructive/5 p-4">
@@ -61,7 +61,7 @@ export default async function AdminUsersPage() {
               href="/"
               className="text-sm font-medium text-primary hover:underline"
             >
-              ← Back to Home
+              ← Retour à l'accueil
             </Link>
           </div>
         </div>
@@ -103,13 +103,13 @@ export default async function AdminUsersPage() {
                   Email
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                  Name
+                  Nom
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                  Status
+                  Statut
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                  Deleted
+                  Supprimé
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
                   Actions

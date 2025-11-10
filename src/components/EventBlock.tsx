@@ -1,3 +1,6 @@
+// src/components/EventHoverCard.tsx
+"use client";
+
 import type React from "react";
 import {
   HoverCard,
@@ -5,6 +8,7 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { Clock, MapPin, Tag, User } from "lucide-react";
+import { useState } from "react";
 
 interface EventHoverCardProps {
   event: {
@@ -32,23 +36,39 @@ export default function EventHoverCard({
   roomName,
   children,
 }: EventHoverCardProps) {
+  const [open, setOpen] = useState(false);
+
+  const handleClick = (e: React.MouseEvent) => {
+    if ((e.target as HTMLElement).closest("[data-event-menu]")) return;
+    e.stopPropagation();
+    setOpen((prev) => !prev);
+  };
+
   return (
-    <HoverCard openDelay={100} closeDelay={150}>
-      <HoverCardTrigger asChild>{children}</HoverCardTrigger>
+    <HoverCard
+      open={open}
+      onOpenChange={setOpen}
+      openDelay={100}
+      closeDelay={150}
+    >
+      <HoverCardTrigger asChild>
+        <div onClick={handleClick} className="cursor-pointer">
+          {children}
+        </div>
+      </HoverCardTrigger>
 
       <HoverCardContent
-        className="w-50 p-4 z-50
-             bg-[var(--card)] text-[var(--popover-foreground)]
-             border-[var(--border)] shadow-md backdrop-blur-none rounded-lg overflow-hidden
-             transition-all duration-300 ease-out
-             data-[state=open]:animate-in data-[state=closed]:animate-out
-             data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95
-             data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95
-             data-[side=bottom]:slide-in-from-top-2"
+        side="top"
+        align="center"
+        sideOffset={8}
+        className="w-64 p-4 z-50 bg-[var(--card)] text-[var(--popover-foreground)] border-[var(--border)] shadow-xl rounded-lg
+          data-[state=open]:animate-in data-[state=closed]:animate-out
+          data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0
+          data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95
+          data-[side=top]:slide-in-from-bottom-2"
       >
         <div className="space-y-4">
           <div className="space-y-3">
-            {/* Organizer */}
             {event.organizerName && (
               <div className="flex items-center gap-3 text-sm">
                 <User className="w-4 h-4 text-primary flex-shrink-0" />
@@ -71,7 +91,6 @@ export default function EventHoverCard({
               </div>
             )}
 
-            {/* Room */}
             <div className="flex items-center gap-3 text-sm">
               <MapPin className="w-4 h-4 text-primary flex-shrink-0" />
               <div>
@@ -82,7 +101,6 @@ export default function EventHoverCard({
               </div>
             </div>
 
-            {/* Time */}
             <div className="flex items-center gap-3 text-sm">
               <Clock className="w-4 h-4 text-primary flex-shrink-0" />
               <div>
@@ -95,6 +113,7 @@ export default function EventHoverCard({
               </div>
             </div>
           </div>
+
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-semibold">

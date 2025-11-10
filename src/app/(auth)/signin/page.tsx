@@ -48,7 +48,7 @@ export default function SignInPage() {
     <div className="min-h-screen bg-white dark:bg-slate-900 grid place-items-center p-4">
       <div className="w-full max-w-sm">
         <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-6">
-          Sign in
+          Se connecter
         </h1>
 
         {/* Google FIRST and very visible */}
@@ -75,7 +75,7 @@ export default function SignInPage() {
               d="M43.6 20.5H42V20H24v8h11.3c-1.3 3.9-5.1 7-9.3 7-5 0-9.3-3.3-10.8-7.8l-6.7 5.2C9.7 39.9 16.3 45 24 45c9.4 0 18.5-6.9 18.5-20 0-1.5-.1-2.6-.3-4.5z"
             />
           </svg>
-          <span className="font-medium">Continue with Google</span>
+          <span className="font-medium">Se connecter avec Google</span>
         </a>
 
         <div className="relative my-4">
@@ -112,7 +112,7 @@ export default function SignInPage() {
               htmlFor="password"
               className="text-sm font-medium text-slate-800 dark:text-slate-100"
             >
-              Password
+              Mot de passe
             </label>
             <input
               id="password"
@@ -135,12 +135,12 @@ export default function SignInPage() {
         </form>
 
         <p className="mt-4 text-center text-sm text-slate-600 dark:text-slate-400">
-          Don’t have an account?{" "}
+          Vous n'avez pas de compte ??{" "}
           <Link
             href="/signup"
             className="text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300 font-medium"
           >
-            Create one
+            Créer un compte
           </Link>
         </p>
       </div>
